@@ -11,6 +11,7 @@ import javafx.scene.control.TextField;
 import javafx.scene.layout.GridPane;
 import javafx.stage.Stage;
 
+import java.io.IOException;
 import java.util.ArrayList;
 
 public class Main extends Application {
@@ -55,7 +56,7 @@ public class Main extends Application {
         Button search = new Button("Suche");
         GridPane.setConstraints(search, 1, 11);
         search.setOnAction(e -> {
-            if(!DEBUG) {
+            if(DEBUG) {
                 // Set predefined values
                 textFields.get(0).setText("Aspersdorfer Str. 11b, 2020 Gemeinde Hollabrunn");
                 textFields.get(1).setText("Brunnthalgasse 10, 2020 Hollabrunn");
@@ -74,12 +75,22 @@ public class Main extends Application {
             }
 
             // start navigation stuff
+            ArrayList<String> waypoints = new ArrayList<>();
+            for(TextField textField : textFields) {
+                if(!textField.getText().equals("")) waypoints.add(textField.getText());
+            }
+            try {
+                GoogleAPI.analyze(waypoints);
+            } catch (IOException e1) {
+                e1.printStackTrace();
+                // TODO ass message box
+            }
 
 
         });
 
 
-        //Add everything to grid
+        // Add everything to grid
         grid.getChildren().addAll(labels);
         grid.getChildren().addAll(textFields);
         grid.getChildren().addAll(search);
