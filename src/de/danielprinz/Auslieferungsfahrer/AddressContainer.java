@@ -1,36 +1,65 @@
 package de.danielprinz.Auslieferungsfahrer;
 
+import com.google.maps.model.LatLng;
+
 public class AddressContainer {
 
-    public AddressContainer(String address, double lat, double lng) {
+    private String address;
+    private LatLng latLng;
+    private double elevation;
+
+    public AddressContainer(String address, LatLng latLng) {
         this.address = address;
-        this.lat = lat;
-        this.lng = lng;
+        this.latLng = latLng;
     }
 
-    String address;
-    double lat, lng;
 
     public String getAddress() {
         return address;
     }
 
-    public double getLat() {
-        return lat;
+    public LatLng getLatLng() {
+        return latLng;
     }
 
-    public double getLng() {
-        return lng;
+    public double getElevation() {
+        return elevation;
     }
 
+    public void setElevation(double elevation) {
+        this.elevation = elevation;
+    }
+
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+
+        AddressContainer that = (AddressContainer) o;
+
+        if (Double.compare(that.elevation, elevation) != 0) return false;
+        if (!address.equals(that.address)) return false;
+        return latLng.equals(that.latLng);
+    }
+
+    @Override
+    public int hashCode() {
+        int result;
+        long temp;
+        result = address.hashCode();
+        result = 31 * result + latLng.hashCode();
+        temp = Double.doubleToLongBits(elevation);
+        result = 31 * result + (int) (temp ^ (temp >>> 32));
+        return result;
+    }
 
     @Override
     public String toString() {
         return "AddressContainer{" +
                 "address='" + address + '\'' +
-                ", lat=" + lat +
-                ", lng=" + lng +
+                ", latLng=" + latLng +
+                ", elevation=" + elevation +
                 '}';
     }
-
 }

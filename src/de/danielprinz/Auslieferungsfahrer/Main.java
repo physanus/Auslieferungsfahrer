@@ -23,6 +23,9 @@ public class Main extends Application {
     }
 
 
+
+
+
     @Override
     public void start(Stage primaryStage) throws Exception {
         Stage window = primaryStage;
@@ -74,6 +77,10 @@ public class Main extends Application {
                 return;
             }
 
+            search.setDisable(true);
+            for(TextField textField : textFields) textField.setDisable(true);
+
+            // TODO make async
             // start navigation stuff
             ArrayList<String> waypoints = new ArrayList<>();
             for(TextField textField : textFields) {
@@ -83,7 +90,6 @@ public class Main extends Application {
                 GoogleAPI.analyze(waypoints);
             } catch (IOException e1) {
                 e1.printStackTrace();
-                // TODO ass message box
             }
 
 
