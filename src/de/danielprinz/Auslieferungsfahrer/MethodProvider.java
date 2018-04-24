@@ -29,20 +29,24 @@ public class MethodProvider {
     }
 
     /**
-     * Finds the routecontainer with the lowest cost
+     * Finds the routecontainers with the lowest costs
      * @param routeContainers The routes
-     * @return The route
+     * @return The routes
      */
-    public static RouteContainer getCheapestRoute(ArrayList<RouteContainer> routeContainers) {
+    public static ArrayList<RouteContainer> getCheapestRoutes(ArrayList<RouteContainer> routeContainers) {
         double lowestCost = Double.MAX_VALUE;
-        RouteContainer cheapestRoute = null;
         for(RouteContainer routeContainer : routeContainers) {
-            if(routeContainer.getCost() < lowestCost) {
+            if(routeContainer.getCost() < lowestCost)
                 lowestCost = routeContainer.getCost();
-                cheapestRoute = routeContainer;
-            }
         }
-        return cheapestRoute;
+
+        ArrayList<RouteContainer> cheapestRoutes = new ArrayList<>();
+        for(RouteContainer routeContainer : routeContainers) {
+            if(routeContainer.getCost() == lowestCost)
+                cheapestRoutes.add(routeContainer);
+        }
+
+        return cheapestRoutes;
     }
 
 }

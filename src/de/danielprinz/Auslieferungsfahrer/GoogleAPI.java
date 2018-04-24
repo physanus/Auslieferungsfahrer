@@ -32,21 +32,31 @@ public class GoogleAPI {
 
         // convert addresses to lat|lang
         ArrayList<AddressContainer> addressContainers = getLatLang(waypoints);
+        if(Main.DEBUG) System.out.println("LatLang:");
         if(Main.DEBUG) for(AddressContainer addressContainer : addressContainers) System.out.println(addressContainer);
+        if(Main.DEBUG) System.out.println("total: " + addressContainers.size());
         if(Main.DEBUG) System.out.println("");
 
         // get elevation
         addressContainers = getElevation(addressContainers);
+        if(Main.DEBUG) System.out.println("Elevation:");
         if(Main.DEBUG) for(AddressContainer addressContainer : addressContainers) System.out.println(addressContainer);
+        if(Main.DEBUG) System.out.println("total: " + addressContainers.size());
         if(Main.DEBUG) System.out.println("");
 
         // get all possible relations
         ArrayList<RelationContainer> relationContainers = getRelations(addressContainers);
+        if(Main.DEBUG) System.out.println("Relations:");
         if(Main.DEBUG) for(RelationContainer relationContainer : relationContainers) System.out.println(relationContainer);
         if(Main.DEBUG) System.out.println("total: " + relationContainers.size());
         if(Main.DEBUG) System.out.println("");
 
-        getRoutes(addressContainers, relationContainers);
+        ArrayList<RouteContainer> cheapestRoutes = getCheapestRoutes(addressContainers, relationContainers);
+        if(Main.DEBUG) System.out.println("Cheapest route(s):");
+        if(Main.DEBUG) for(RouteContainer routeContainer : cheapestRoutes) System.out.println(routeContainer);
+        if(Main.DEBUG) System.out.println("total: " + cheapestRoutes.size());
+        if(Main.DEBUG) System.out.println("");
+
 
     }
 
@@ -141,7 +151,7 @@ public class GoogleAPI {
         return relationContainers;
     }
 
-    private static ArrayList<List<RelationContainer>> getRoutes(ArrayList<AddressContainer> addressContainers, ArrayList<RelationContainer> relationContainers) {
+    private static ArrayList<RouteContainer> getCheapestRoutes(ArrayList<AddressContainer> addressContainers, ArrayList<RelationContainer> relationContainers) {
 
         // 0 | 1 | 2 | 3
         // 01 | 02 | 03 | 12 | 13 | 23
@@ -172,27 +182,17 @@ public class GoogleAPI {
             }
             //routeContainer.finish(relationContainers);
             routeContainers.add(routeContainer);
-            System.out.println(routeContainer);
         }
-        System.out.println("");
+
+        for(RouteContainer routeContainer : routeContainers) {
+            routeContainer.shift(startpoint);
+            routeContainer.finish(relationContainers);
+        }
 
         // lets find the route with the lowest cost
-        // TODO check for other routes as cheap as this one and suggest them as alternative routes
-        RouteContainer cheapest = MethodProvider.getCheapestRoute(routeContainers);
+        ArrayList<RouteContainer> cheapestRoutes = MethodProvider.getCheapestRoutes(routeContainers);
 
-        // lets order it correctly since we wanted to
-        cheapest.shift(startpoint);
-        cheapest.finish(relationContainers);
-
-        System.out.println(cheapest);
-
-
-
-
-
-
-        return null;
-
+        return cheapestRoutes;
     }
 
 
