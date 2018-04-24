@@ -11,6 +11,8 @@ public class RouteContainer {
         this.addElement(startpoint, 0);
     }
 
+    private RouteContainer() {
+    }
 
     public void addElement(AddressContainer addressContainer, double cost) {
         this.route.add(addressContainer);
@@ -39,6 +41,20 @@ public class RouteContainer {
     public void finish(ArrayList<RelationContainer> relationContainers) {
         RelationContainer relationContainer = MethodProvider.getRelationByAddresses(relationContainers, this.getLastElement(), this.getFirstElement());
         this.addElement(this.getFirstElement(), relationContainer.getCost(this.getLastElement()));
+    }
+
+    /**
+     * Makes a copy of the routeContainer
+     * @return The copy
+     */
+    public RouteContainer copy() {
+        RouteContainer newRouteContainer = new RouteContainer();
+        for(AddressContainer addressContainer : this.route) {
+            newRouteContainer.route.add(addressContainer);
+        }
+        newRouteContainer.cost = this.cost;
+
+        return newRouteContainer;
     }
 
     /**

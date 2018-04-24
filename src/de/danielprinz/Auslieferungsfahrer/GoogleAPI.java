@@ -157,37 +157,67 @@ public class GoogleAPI {
         // 01 | 02 | 03 | 12 | 13 | 23
 
         // startpoint is the point where the final route should start at
-        // addressContainer is only used to check the cost
-
         AddressContainer startpoint = addressContainers.get(0);
 
 
-        ArrayList<RouteContainer> routeContainers = new ArrayList<>();
+        ArrayList<RouteContainer> routeContainers = new ArrayList<>(); // stores the final routes
         for(AddressContainer startpointCurrent : addressContainers) {
-            RouteContainer routeContainer = new RouteContainer(startpointCurrent);
-            while(true) {
-                List<AddressContainer> acs = addressContainers.stream().filter(ac -> !routeContainer.contains(ac)).collect(Collectors.toList());
-                if(acs.isEmpty()) break;
 
-                // get costs
+            //HashMap<RouteContainer, AddressContainer> buffer = new HashMap<>();
+            ArrayList<BufferContainer> buffer = new ArrayList<>();// in case we get equal relation-costs, put them into the buffer and calculate them later // routeContainer, startpointCurrent
+
+            RouteContainer routeContainer = new RouteContainer(startpointCurrent); // stores the route currently being worked on
+            while(true) { // as long as there are not-visited-places left
+                RouteContainer finalRouteContainer = routeContainer;
+                List<AddressContainer> acs = addressContainers.stream().filter(ac -> !finalRouteContainer.contains(ac)).collect(Collectors.toList());
+                if(acs.isEmpty()) {
+                    // current route is done, save it
+                    routeContainers.add(routeContainer);
+                    if(buffer.isEmpty()) {
+                        // nothing in the buffer, continue
+                        break;
+                    } else {
+                        // we need to calculate something, load it
+                        BufferContainer bufferContainer = buffer.get(0);
+                        buffer.remove(0);
+                        routeContainer = bufferContainer.getRouteContainer();
+                        startpointCurrent = bufferContainer.getStartpointCurrent();
+                        continue;
+                    }
+                }
+
+                // get costs of all possible relations (to not-visited-places)
                 HashMap<AddressContainer, Double> costs = new HashMap<>();
                 for(AddressContainer possibleRelationDestination : acs) {
                     RelationContainer possibleRelationContainer = MethodProvider.getRelationByAddresses(relationContainers, startpointCurrent, possibleRelationDestination);
                     costs.put(possibleRelationDestination, possibleRelationContainer.getCost(startpointCurrent));
                 }
-                List<AddressContainer> smallestValues = MethodProvider.getCheapestAddress(costs);
-                // TODO handle multiple results. For now we will discard them
-                routeContainer.addElement(smallestValues.get(0), costs.get(smallestValues.get(0)));
-                startpointCurrent = smallestValues.get(0);
+                List<AddressContainer> cheapestAddresses = MethodProvider.getCheapestAddresses(costs);
+                if(cheapestAddresses.size() > 1) {
+                    // multiple relations have the same cost
+                    // TODO not yet tested, I couldn't find any locations having the same cost. Pretty unlikely anyways.
+                    // In case something crashes here, don't blame me but the earth for having too many odd numbers.
+                    System.out.println("======================================================================================");
+                    System.out.println("= Untested state. Please send the locations entered to plan the route to the author: =");
+                    System.out.println("================== https://github.com/physanus/Auslieferungsfahrer ===================");
+                    System.out.println("===================================== Thank you! =====================================");
+                    System.out.println("======================================================================================");
+                    for(int i = 1; i < cheapestAddresses.size(); i++) {
+                        buffer.add(new BufferContainer(routeContainer.copy(), cheapestAddresses.get(i)));
+                    }
+                }
+
+                routeContainer.addElement(cheapestAddresses.get(0), costs.get(cheapestAddresses.get(0)));
+                startpointCurrent = cheapestAddresses.get(0);
             }
-            //routeContainer.finish(relationContainers);
-            routeContainers.add(routeContainer);
         }
 
         for(RouteContainer routeContainer : routeContainers) {
             routeContainer.shift(startpoint);
             routeContainer.finish(relationContainers);
+            System.out.println(routeContainer);
         }
+        System.out.println("");
 
         // lets find the route with the lowest cost
         ArrayList<RouteContainer> cheapestRoutes = MethodProvider.getCheapestRoutes(routeContainers);

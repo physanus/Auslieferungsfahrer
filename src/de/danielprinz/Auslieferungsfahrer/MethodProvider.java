@@ -18,7 +18,7 @@ public class MethodProvider {
      * @param costs The map
      * @return The Map
      */
-    public static List<AddressContainer> getCheapestAddress(HashMap<AddressContainer, Double> costs) {
+    public static List<AddressContainer> getCheapestAddresses(HashMap<AddressContainer, Double> costs) {
         double minValue = Collections.min(costs.values());
 
         List<AddressContainer> smallestValues = new ArrayList<>();
