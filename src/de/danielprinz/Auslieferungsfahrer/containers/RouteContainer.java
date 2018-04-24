@@ -1,4 +1,6 @@
-package de.danielprinz.Auslieferungsfahrer;
+package de.danielprinz.Auslieferungsfahrer.containers;
+
+import de.danielprinz.Auslieferungsfahrer.MethodProvider;
 
 import java.util.ArrayList;
 
@@ -35,8 +37,8 @@ public class RouteContainer {
     }
 
     /**
-     * Closes the route so that the endpoint is equal to the start point
-     * @param relationContainers
+     * Closes the route so that the endpoint is equal to the startpoint
+     * @param relationContainers The relation containers
      */
     public void finish(ArrayList<RelationContainer> relationContainers) {
         RelationContainer relationContainer = MethodProvider.getRelationByAddresses(relationContainers, this.getLastElement(), this.getFirstElement());
@@ -49,9 +51,7 @@ public class RouteContainer {
      */
     public RouteContainer copy() {
         RouteContainer newRouteContainer = new RouteContainer();
-        for(AddressContainer addressContainer : this.route) {
-            newRouteContainer.route.add(addressContainer);
-        }
+        newRouteContainer.route.addAll(this.route);
         newRouteContainer.cost = this.cost;
 
         return newRouteContainer;
@@ -59,7 +59,7 @@ public class RouteContainer {
 
     /**
      * Shifts the addresses until out startpoint is the startpoint
-     * @param startpoint
+     * @param startpoint The startpoint of the route
      */
     public void shift(AddressContainer startpoint) {
         while(!this.getFirstElement().equals(startpoint)) {

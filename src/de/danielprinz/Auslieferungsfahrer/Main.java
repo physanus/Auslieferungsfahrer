@@ -2,6 +2,7 @@ package de.danielprinz.Auslieferungsfahrer;
 
 import com.sun.javafx.tk.FontLoader;
 import com.sun.javafx.tk.Toolkit;
+import de.danielprinz.Auslieferungsfahrer.gui.AlertBox;
 import javafx.application.Application;
 import javafx.geometry.Insets;
 import javafx.scene.Scene;

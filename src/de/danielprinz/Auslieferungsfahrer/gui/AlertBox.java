@@ -1,4 +1,4 @@
-package de.danielprinz.Auslieferungsfahrer;
+package de.danielprinz.Auslieferungsfahrer.gui;
 
 import javafx.geometry.HPos;
 import javafx.geometry.Insets;

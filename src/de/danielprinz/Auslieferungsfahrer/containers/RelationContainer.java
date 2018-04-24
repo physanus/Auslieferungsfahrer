@@ -1,4 +1,4 @@
-package de.danielprinz.Auslieferungsfahrer;
+package de.danielprinz.Auslieferungsfahrer.containers;
 
 import com.google.maps.model.Distance;
 import com.google.maps.model.Duration;
@@ -10,10 +10,10 @@ public class RelationContainer {
     private final static double CONSUMPTION_UPHILL   = 120.0;    // kW/h per 100 km
 
 
-    AddressContainer addressContainer1;
-    AddressContainer addressContainer2;
-    Duration duration;
-    Distance distance;
+    private AddressContainer addressContainer1;
+    private AddressContainer addressContainer2;
+    private Duration duration;
+    private Distance distance;
 
     public RelationContainer(AddressContainer addressContainer1, AddressContainer addressContainer2, Duration duration, Distance distance) {
         this.addressContainer1 = addressContainer1;

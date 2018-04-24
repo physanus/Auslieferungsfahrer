@@ -1,4 +1,4 @@
-package de.danielprinz.Auslieferungsfahrer;
+package de.danielprinz.Auslieferungsfahrer.containers;
 
 import com.google.maps.model.LatLng;
 

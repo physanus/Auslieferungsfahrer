@@ -7,6 +7,10 @@ import com.google.maps.GeoApiContext;
 import com.google.maps.GeocodingApi;
 import com.google.maps.errors.ApiException;
 import com.google.maps.model.*;
+import de.danielprinz.Auslieferungsfahrer.containers.AddressContainer;
+import de.danielprinz.Auslieferungsfahrer.containers.BufferContainer;
+import de.danielprinz.Auslieferungsfahrer.containers.RelationContainer;
+import de.danielprinz.Auslieferungsfahrer.containers.RouteContainer;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -20,9 +24,9 @@ import java.util.stream.Collectors;
 
 public class GoogleAPI {
 
-    public static final String API_KEY_GEOCODING = "AIzaSyDvfT13x4r95aAEDWbSKmisylcsCqVw6Xs";
-    public static final String API_KEY_ELEVATION = "AIzaSyDLP9QNf7wJjcQ3kW03IFEuFywEJ9KFDmM";
-    public static final String API_KEY_DISTANCE_MATRIX = "AIzaSyC-uWBs6zByu5WvBUe5PrF8BfQA59z_5aI";
+    private static final String API_KEY_GEOCODING = "AIzaSyDvfT13x4r95aAEDWbSKmisylcsCqVw6Xs";
+    private static final String API_KEY_ELEVATION = "AIzaSyDLP9QNf7wJjcQ3kW03IFEuFywEJ9KFDmM";
+    private static final String API_KEY_DISTANCE_MATRIX = "AIzaSyC-uWBs6zByu5WvBUe5PrF8BfQA59z_5aI";
 
     /**
      * Returns altitude and distance data
@@ -65,7 +69,7 @@ public class GoogleAPI {
      * Converts addresses into lat|lng pairs
      * @param waypoints A list of addresses
      * @return The list of addresses containing lat|lng pairs
-     * @throws IOException
+     * @throws IOException On GoogleAPI error
      */
     private static ArrayList<AddressContainer> getLatLang(ArrayList<String> waypoints) throws IOException {
 
@@ -93,7 +97,7 @@ public class GoogleAPI {
      * Retrieves the elevation (= height) of the places
      * @param addressContainers The addresses
      * @return The addresses
-     * @throws IOException
+     * @throws IOException On GoogleAPI error
      */
     private static ArrayList<AddressContainer> getElevation(ArrayList<AddressContainer> addressContainers) throws IOException {
 
@@ -121,7 +125,7 @@ public class GoogleAPI {
      * Finds all relations between the addresses
      * @param addressContainers The addresses
      * @return The relations
-     * @throws IOException
+     * @throws IOException On GoogleAPI error
      */
     private static ArrayList<RelationContainer> getRelations(ArrayList<AddressContainer> addressContainers) throws IOException {
         // 0 | 1 | 2 | 3
@@ -151,6 +155,12 @@ public class GoogleAPI {
         return relationContainers;
     }
 
+    /**
+     * Calculates the cheapest routes
+     * @param addressContainers The addresses
+     * @param relationContainers The relations
+     * @return A list of the cheapest routes. Usually contains one element; if more, these are as cheap routes as the first one (alternative routes)
+     */
     private static ArrayList<RouteContainer> getCheapestRoutes(ArrayList<AddressContainer> addressContainers, ArrayList<RelationContainer> relationContainers) {
 
         // 0 | 1 | 2 | 3
@@ -215,9 +225,7 @@ public class GoogleAPI {
         for(RouteContainer routeContainer : routeContainers) {
             routeContainer.shift(startpoint);
             routeContainer.finish(relationContainers);
-            System.out.println(routeContainer);
         }
-        System.out.println("");
 
         // lets find the route with the lowest cost
         ArrayList<RouteContainer> cheapestRoutes = MethodProvider.getCheapestRoutes(routeContainers);
