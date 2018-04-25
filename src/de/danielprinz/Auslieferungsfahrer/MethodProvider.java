@@ -8,6 +8,13 @@ import java.util.*;
 
 public class MethodProvider {
 
+    /**
+     * Retrieves the relation that contains both AddressContainers
+     * @param relationContainers A List of all the available relation containers
+     * @param addressContainer1 The first AddressContainer
+     * @param addressContainer2 The secont AddressContainer
+     * @return The RelationContainer containing both AddressContainers
+     */
     public static RelationContainer getRelationByAddresses(List<RelationContainer> relationContainers, AddressContainer addressContainer1, AddressContainer addressContainer2) {
         for(RelationContainer relationContainer : relationContainers) {
             if(relationContainer.containsAddressContainer(addressContainer1) && relationContainer.containsAddressContainer(addressContainer2)) {

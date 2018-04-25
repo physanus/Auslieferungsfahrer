@@ -9,12 +9,18 @@ public class RelationContainer {
     private final static double CONSUMPTION_NORMAL   = 100.0;    // kW/h per 100 km
     private final static double CONSUMPTION_UPHILL   = 120.0;    // kW/h per 100 km
 
-
     private AddressContainer addressContainer1;
     private AddressContainer addressContainer2;
     private Duration duration;
     private Distance distance;
 
+    /**
+     * Saves the relation data
+     * @param addressContainer1 One of the addresses. Doesn't have to be the start point.
+     * @param addressContainer2 The other address
+     * @param duration The duration of the relation
+     * @param distance The distance of the relation
+     */
     public RelationContainer(AddressContainer addressContainer1, AddressContainer addressContainer2, Duration duration, Distance distance) {
         this.addressContainer1 = addressContainer1;
         this.addressContainer2 = addressContainer2;
@@ -39,8 +45,9 @@ public class RelationContainer {
     }
 
     /**
-     * Calculates the energy consumption
-     * @return The energy consumption
+     * Calculates the energy consumption for this relation
+     * @param start The startpoint
+     * @return The energy consumption in kW/h
      */
     public double getCost(AddressContainer start) {
 
@@ -64,12 +71,20 @@ public class RelationContainer {
 
     }
 
+    /**
+     * Gets the other AddressContainer than specified
+     * @param addressContainer One of the two AddressContainers
+     * @return The other AddressContainer
+     */
     public AddressContainer getOtherAddressContainer(AddressContainer addressContainer) {
         return addressContainer1.equals(addressContainer) ? addressContainer2 : addressContainer1;
     }
 
-
-
+    /**
+     * Checks if the given AddressContainer is contained in the relation
+     * @param addressContainer The AddressContainer
+     * @return The result
+     */
     public boolean containsAddressContainer(AddressContainer addressContainer) {
         return addressContainer1.equals(addressContainer) || addressContainer2.equals(addressContainer);
     }

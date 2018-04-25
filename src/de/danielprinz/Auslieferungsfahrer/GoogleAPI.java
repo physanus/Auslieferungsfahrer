@@ -1,6 +1,7 @@
 package de.danielprinz.Auslieferungsfahrer;
 
-import com.google.gson.*;
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
 import com.google.maps.DistanceMatrixApi;
 import com.google.maps.ElevationApi;
 import com.google.maps.GeoApiContext;
@@ -11,12 +12,11 @@ import de.danielprinz.Auslieferungsfahrer.containers.AddressContainer;
 import de.danielprinz.Auslieferungsfahrer.containers.BufferContainer;
 import de.danielprinz.Auslieferungsfahrer.containers.RelationContainer;
 import de.danielprinz.Auslieferungsfahrer.containers.RouteContainer;
+import de.danielprinz.Auslieferungsfahrer.handlers.DistanceHandler;
+import de.danielprinz.Auslieferungsfahrer.handlers.DurationHandler;
+import de.danielprinz.Auslieferungsfahrer.handlers.EnergyHandler;
 
 import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.net.HttpURLConnection;
-import java.net.URL;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -61,6 +61,11 @@ public class GoogleAPI {
         if(Main.DEBUG) System.out.println("total: " + cheapestRoutes.size());
         if(Main.DEBUG) System.out.println("");
 
+        RouteContainer routeContainer = cheapestRoutes.get(0);
+        System.out.println("Duration : " + new DurationHandler(routeContainer.getDuration()));
+        System.out.println("Distance : " + new DistanceHandler(routeContainer.getDistance()));
+        System.out.println("Energy   : " + new EnergyHandler(routeContainer.getCost()));
+        // Output: time, distance, energy
 
     }
 
@@ -176,7 +181,7 @@ public class GoogleAPI {
             //HashMap<RouteContainer, AddressContainer> buffer = new HashMap<>();
             ArrayList<BufferContainer> buffer = new ArrayList<>();// in case we get equal relation-costs, put them into the buffer and calculate them later // routeContainer, startpointCurrent
 
-            RouteContainer routeContainer = new RouteContainer(startpointCurrent); // stores the route currently being worked on
+            RouteContainer routeContainer = new RouteContainer(relationContainers, startpointCurrent); // stores the route currently being worked on
             while(true) { // as long as there are not-visited-places left
                 RouteContainer finalRouteContainer = routeContainer;
                 List<AddressContainer> acs = addressContainers.stream().filter(ac -> !finalRouteContainer.contains(ac)).collect(Collectors.toList());
@@ -217,7 +222,7 @@ public class GoogleAPI {
                     }
                 }
 
-                routeContainer.addElement(cheapestAddresses.get(0), costs.get(cheapestAddresses.get(0)));
+                routeContainer.addElement(relationContainers, cheapestAddresses.get(0), costs.get(cheapestAddresses.get(0)));
                 startpointCurrent = cheapestAddresses.get(0);
             }
         }
@@ -233,13 +238,4 @@ public class GoogleAPI {
         return cheapestRoutes;
     }
 
-
-    private static JsonObject getURLContent(URL url) throws IOException {
-        HttpURLConnection request = (HttpURLConnection) url.openConnection();
-        request.connect();
-
-        JsonParser jp = new JsonParser();
-        JsonElement root = jp.parse(new InputStreamReader((InputStream) request.getContent()));
-        return root.getAsJsonObject();
-    }
 }

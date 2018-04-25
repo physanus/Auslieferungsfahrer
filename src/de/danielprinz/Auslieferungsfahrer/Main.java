@@ -4,16 +4,20 @@ import com.sun.javafx.tk.FontLoader;
 import com.sun.javafx.tk.Toolkit;
 import de.danielprinz.Auslieferungsfahrer.gui.AlertBox;
 import javafx.application.Application;
+import javafx.application.Platform;
 import javafx.geometry.Insets;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
+import javafx.scene.control.TextInputControl;
+import javafx.scene.image.Image;
 import javafx.scene.layout.GridPane;
 import javafx.stage.Stage;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.stream.Collectors;
 
 public class Main extends Application {
 
@@ -25,12 +29,11 @@ public class Main extends Application {
 
 
 
-
-
     @Override
     public void start(Stage primaryStage) throws Exception {
         Stage window = primaryStage;
         window.setTitle("Der Auslieferungsfahrer");
+        window.getIcons().add(new Image(Main.class.getResourceAsStream("delivery-truck.png")));
 
         // Grid pane
         GridPane grid = new GridPane();
@@ -67,6 +70,7 @@ public class Main extends Application {
                 textFields.get(2).setText("Aspersdorfer Str. 34, 2020 Gemeinde Hollabrunn");
                 textFields.get(3).setText("Im Dorf 63, 2020 Gemeinde Hollabrunn");
                 textFields.get(4).setText("Sonnberger Str. 61, 2020 Gemeinde Hollabrunn");
+                textFields.get(5).setText("Brunnengasse 46, 67454 Haßloch");
             }
 
             if(textFields.get(0).getText().equals("")) {
@@ -80,18 +84,20 @@ public class Main extends Application {
 
             search.setDisable(true);
             for(TextField textField : textFields) textField.setDisable(true);
+            ArrayList<String> waypoints = new ArrayList<>(textFields.stream().map(TextInputControl::getText).filter(s -> !s.equals("")).collect(Collectors.toList()));
 
-            // TODO make async
-            // start navigation stuff
-            ArrayList<String> waypoints = new ArrayList<>();
-            for(TextField textField : textFields) {
-                if(!textField.getText().equals("")) waypoints.add(textField.getText());
-            }
-            try {
-                GoogleAPI.analyze(waypoints);
-            } catch (IOException e1) {
-                e1.printStackTrace();
-            }
+            new Thread(() -> {
+                try {
+                    GoogleAPI.analyze(waypoints);
+                } catch (IOException e1) {
+                    e1.printStackTrace();
+                }
+
+                Platform.runLater(() -> {
+                    search.setDisable(false);
+                    for(TextField textField : textFields) textField.setDisable(false);
+                });
+            }).start();
 
 
         });
@@ -107,4 +113,6 @@ public class Main extends Application {
         window.show();
 
     }
+
+
 }

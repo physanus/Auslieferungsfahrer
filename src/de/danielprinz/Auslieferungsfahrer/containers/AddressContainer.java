@@ -8,6 +8,11 @@ public class AddressContainer {
     private LatLng latLng;
     private double elevation;
 
+    /**
+     * Stores an address with its corresponding data, e.g. coordinates, name, elevation, etc.
+     * @param address The address entered into the text field
+     * @param latLng The coordinates of the address
+     */
     public AddressContainer(String address, LatLng latLng) {
         this.address = address;
         this.latLng = latLng;
