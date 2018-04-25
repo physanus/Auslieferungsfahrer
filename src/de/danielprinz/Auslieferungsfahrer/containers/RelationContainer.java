@@ -2,6 +2,10 @@ package de.danielprinz.Auslieferungsfahrer.containers;
 
 import com.google.maps.model.Distance;
 import com.google.maps.model.Duration;
+import com.google.maps.model.ElevationResult;
+import de.danielprinz.Auslieferungsfahrer.GoogleAPI;
+
+import java.io.IOException;
 
 public class RelationContainer {
 
@@ -13,6 +17,7 @@ public class RelationContainer {
     private AddressContainer addressContainer2;
     private Duration duration;
     private Distance distance;
+    private double cost = -1;
 
     /**
      * Saves the relation data
@@ -46,16 +51,41 @@ public class RelationContainer {
 
     /**
      * Calculates the energy consumption for this relation
-     * @param start The startpoint
+     * @param start The startpoint. null if you only need the magnitude
      * @return The energy consumption in kW/h
      */
     public double getCost(AddressContainer start) {
 
+        // allow caching of the costs
+        if(start == null) {
+            if(cost == -1) {
+                start = addressContainer1;
+            } else {
+                return cost;
+            }
+        }
+
         if(!start.equals(addressContainer1) && !start.equals(addressContainer2)) throw new IllegalArgumentException("The specified addresscontainer is not contained in the given Relation container:\n" + start.toString() + "\n" + this.toString());
         AddressContainer end = getOtherAddressContainer(start);
 
-        double altitude = end.getElevation() - start.getElevation();
-        double slope = altitude / distance.inMeters; // Steigung in %
+        ///////////////////////////////////////////////////
+
+        ElevationResult[] elevationResults;
+        try {
+            // TODO change samples; greater: more processing power, less: more approximately
+            elevationResults = GoogleAPI.getExactElevation(start, end, 100);
+        } catch (IOException e) {
+            e.printStackTrace();
+            return 0.0;
+        }
+
+        double elevation = 0.0;
+        for(ElevationResult elevationResult : elevationResults) {
+            elevation += elevationResult.elevation;
+        }
+
+
+        double slope = elevation / distance.inMeters; // Steigung in %
 
         if(slope < -3) {
             // energy retrieval
@@ -97,7 +127,7 @@ public class RelationContainer {
                 ", addressContainer2=" + addressContainer2 +
                 ", duration=" + duration +
                 ", distance=" + distance +
-                ", cost=+-" + getCost(addressContainer1) +
+                ", cost=+-" + getCost(null) +
                 '}';
     }
 }

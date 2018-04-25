@@ -6,7 +6,6 @@ public class AddressContainer {
 
     private String address;
     private LatLng latLng;
-    private double elevation;
 
     /**
      * Stores an address with its corresponding data, e.g. coordinates, name, elevation, etc.
@@ -27,14 +26,6 @@ public class AddressContainer {
         return latLng;
     }
 
-    public double getElevation() {
-        return elevation;
-    }
-
-    public void setElevation(double elevation) {
-        this.elevation = elevation;
-    }
-
 
     @Override
     public boolean equals(Object o) {
@@ -43,19 +34,14 @@ public class AddressContainer {
 
         AddressContainer that = (AddressContainer) o;
 
-        if (Double.compare(that.elevation, elevation) != 0) return false;
-        if (!address.equals(that.address)) return false;
-        return latLng.equals(that.latLng);
+        if (address != null ? !address.equals(that.address) : that.address != null) return false;
+        return latLng != null ? latLng.equals(that.latLng) : that.latLng == null;
     }
 
     @Override
     public int hashCode() {
-        int result;
-        long temp;
-        result = address.hashCode();
-        result = 31 * result + latLng.hashCode();
-        temp = Double.doubleToLongBits(elevation);
-        result = 31 * result + (int) (temp ^ (temp >>> 32));
+        int result = address != null ? address.hashCode() : 0;
+        result = 31 * result + (latLng != null ? latLng.hashCode() : 0);
         return result;
     }
 
@@ -64,7 +50,6 @@ public class AddressContainer {
         return "AddressContainer{" +
                 "address='" + address + '\'' +
                 ", latLng=" + latLng +
-                ", elevation=" + elevation +
                 '}';
     }
 }

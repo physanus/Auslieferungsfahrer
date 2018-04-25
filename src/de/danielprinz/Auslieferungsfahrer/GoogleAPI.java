@@ -28,6 +28,10 @@ public class GoogleAPI {
     private static final String API_KEY_ELEVATION = "AIzaSyDLP9QNf7wJjcQ3kW03IFEuFywEJ9KFDmM";
     private static final String API_KEY_DISTANCE_MATRIX = "AIzaSyC-uWBs6zByu5WvBUe5PrF8BfQA59z_5aI";
 
+    private static final GeoApiContext CONTEXT_GEOCODING = new GeoApiContext.Builder().apiKey(API_KEY_GEOCODING).build();
+    private static final GeoApiContext CONTEXT_ELEVATION = new GeoApiContext.Builder().apiKey(API_KEY_ELEVATION).build();
+    private static final GeoApiContext CONTEXT_DISTANCE_MATRIX = new GeoApiContext.Builder().apiKey(API_KEY_DISTANCE_MATRIX).build();
+
     /**
      * Returns altitude and distance data
      * @param waypoints A list of addresses
@@ -42,11 +46,11 @@ public class GoogleAPI {
         if(Main.DEBUG) System.out.println("");
 
         // get elevation
-        addressContainers = getElevation(addressContainers);
+        /*addressContainers = getElevation(addressContainers);
         if(Main.DEBUG) System.out.println("Elevation:");
         if(Main.DEBUG) for(AddressContainer addressContainer : addressContainers) System.out.println(addressContainer);
         if(Main.DEBUG) System.out.println("total: " + addressContainers.size());
-        if(Main.DEBUG) System.out.println("");
+        if(Main.DEBUG) System.out.println("");*/
 
         // get all possible relations
         ArrayList<RelationContainer> relationContainers = getRelations(addressContainers);
@@ -79,12 +83,11 @@ public class GoogleAPI {
     private static ArrayList<AddressContainer> getLatLang(ArrayList<String> waypoints) throws IOException {
 
         ArrayList<AddressContainer> addressContainers = new ArrayList<>();
-        GeoApiContext context = new GeoApiContext.Builder().apiKey(API_KEY_GEOCODING).build();
 
         for(String waypoint : waypoints) {
             GeocodingResult[] results = new GeocodingResult[0];
             try {
-                results = GeocodingApi.geocode(context, waypoint).await();
+                results = GeocodingApi.geocode(CONTEXT_GEOCODING, waypoint).await();
             } catch (ApiException | InterruptedException e) {
                 e.printStackTrace();
             }
@@ -106,13 +109,11 @@ public class GoogleAPI {
      */
     private static ArrayList<AddressContainer> getElevation(ArrayList<AddressContainer> addressContainers) throws IOException {
 
-        GeoApiContext context = new GeoApiContext.Builder().apiKey(API_KEY_ELEVATION).build();
-
         for(AddressContainer addressContainer : addressContainers) {
 
             ElevationResult result = new ElevationResult();
             try {
-                result = ElevationApi.getByPoint(context, addressContainer.getLatLng()).await();
+                result = ElevationApi.getByPoint(CONTEXT_ELEVATION, addressContainer.getLatLng()).await();
             } catch (ApiException | InterruptedException e) {
                 e.printStackTrace();
             }
@@ -120,7 +121,7 @@ public class GoogleAPI {
             Gson gson = new GsonBuilder().setPrettyPrinting().create();
             double elevation = result.elevation;
 
-            addressContainer.setElevation(elevation);
+            //addressContainer.setElevation(elevation);
         }
 
         return addressContainers;
@@ -136,7 +137,7 @@ public class GoogleAPI {
         // 0 | 1 | 2 | 3
 
         ArrayList<RelationContainer> relationContainers = new ArrayList<>();
-        GeoApiContext context = new GeoApiContext.Builder().apiKey(API_KEY_DISTANCE_MATRIX).build();
+
 
         for(int i = 0; i < addressContainers.size(); i++) {
             for(int j = i+1; j < addressContainers.size(); j++) {
@@ -145,7 +146,7 @@ public class GoogleAPI {
 
                 DistanceMatrix result = null;
                 try {
-                    result = DistanceMatrixApi.newRequest(context).origins(addressContainer1.getLatLng()).destinations(addressContainer2.getLatLng()).await();
+                    result = DistanceMatrixApi.newRequest(CONTEXT_DISTANCE_MATRIX).origins(addressContainer1.getLatLng()).destinations(addressContainer2.getLatLng()).await();
                 } catch (ApiException | InterruptedException e) {
                     e.printStackTrace();
                 }
@@ -236,6 +237,26 @@ public class GoogleAPI {
         ArrayList<RouteContainer> cheapestRoutes = MethodProvider.getCheapestRoutes(routeContainers);
 
         return cheapestRoutes;
+    }
+
+    public static ElevationResult[] getExactElevation(AddressContainer start, AddressContainer end, int samples) throws IOException {
+
+        ElevationResult[] results = new ElevationResult[0];
+        try {
+            results = ElevationApi.getByPath(CONTEXT_ELEVATION, samples, start.getLatLng(), end.getLatLng()).await();
+        } catch (InterruptedException | ApiException e) {
+            e.printStackTrace();
+        }
+
+        /*Gson gson = new GsonBuilder().setPrettyPrinting().create();
+        for(ElevationResult elevationResult : results) {
+            double elevation = elevationResult.elevation;
+            LatLng latLng = elevationResult.location;
+            System.out.println(gson.toJson(elevationResult));
+        }*/
+
+        return results;
+
     }
 
 }
