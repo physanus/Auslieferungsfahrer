@@ -4,20 +4,19 @@ import com.google.maps.model.Distance;
 import com.google.maps.model.Duration;
 import com.google.maps.model.ElevationResult;
 import de.danielprinz.Auslieferungsfahrer.GoogleAPI;
+import de.danielprinz.Auslieferungsfahrer.Main;
+import de.danielprinz.Auslieferungsfahrer.enums.Direction;
 
 import java.io.IOException;
 
 public class RelationContainer {
-
-    private final static double CONSUMPTION_DOWNHILL =  90.0;    // kW/h per 100 km
-    private final static double CONSUMPTION_NORMAL   = 100.0;    // kW/h per 100 km
-    private final static double CONSUMPTION_UPHILL   = 120.0;    // kW/h per 100 km
 
     private AddressContainer addressContainer1;
     private AddressContainer addressContainer2;
     private Duration duration;
     private Distance distance;
     private double cost = -1;
+    private ElevationResult[] elevationResults = null;
 
     /**
      * Saves the relation data
@@ -49,6 +48,10 @@ public class RelationContainer {
         return distance;
     }
 
+    public ElevationResult[] getElevationResults() {
+        return elevationResults;
+    }
+
     /**
      * Calculates the energy consumption for this relation
      * @param start The startpoint. null if you only need the magnitude
@@ -70,10 +73,8 @@ public class RelationContainer {
 
         ///////////////////////////////////////////////////
 
-        ElevationResult[] elevationResults;
         try {
-            // TODO change samples; greater: more processing power, less: more approximately
-            elevationResults = GoogleAPI.getExactElevation(start, end, 100);
+            elevationResults = GoogleAPI.getExactElevation(start, end);
         } catch (IOException e) {
             e.printStackTrace();
             return 0.0;
@@ -89,14 +90,14 @@ public class RelationContainer {
 
         if(slope < -3) {
             // energy retrieval
-            return CONSUMPTION_DOWNHILL / 100 / 1000 * distance.inMeters;
+            return Main.SETTINGS_HANDLER.getConsumption(Direction.DOWNHILL) / 100 / 1000 * distance.inMeters;
         }
         if(slope > -3 && slope < 3) {
             // normal behaviour
-            return CONSUMPTION_NORMAL / 100 / 1000 * distance.inMeters;
+            return Main.SETTINGS_HANDLER.getConsumption(Direction.NORMAL) / 100 / 1000 * distance.inMeters;
         } else {
             // higher energy consumption
-            return CONSUMPTION_UPHILL / 100 / 1000 * distance.inMeters;
+            return Main.SETTINGS_HANDLER.getConsumption(Direction.UPHILL) / 100 / 1000 * distance.inMeters;
         }
 
     }

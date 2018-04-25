@@ -12,6 +12,7 @@ import de.danielprinz.Auslieferungsfahrer.containers.AddressContainer;
 import de.danielprinz.Auslieferungsfahrer.containers.BufferContainer;
 import de.danielprinz.Auslieferungsfahrer.containers.RelationContainer;
 import de.danielprinz.Auslieferungsfahrer.containers.RouteContainer;
+import de.danielprinz.Auslieferungsfahrer.enums.Progress;
 import de.danielprinz.Auslieferungsfahrer.handlers.DistanceHandler;
 import de.danielprinz.Auslieferungsfahrer.handlers.DurationHandler;
 import de.danielprinz.Auslieferungsfahrer.handlers.EnergyHandler;
@@ -39,7 +40,8 @@ public class GoogleAPI {
     public static void analyze(ArrayList<String> waypoints) throws IOException {
 
         // convert addresses to lat|lang
-        ArrayList<AddressContainer> addressContainers = getLatLang(waypoints);
+        Main.setProgress(Progress.LAT_LAN);
+        ArrayList<AddressContainer> addressContainers = getLatLng(waypoints);
         if(Main.DEBUG) System.out.println("LatLang:");
         if(Main.DEBUG) for(AddressContainer addressContainer : addressContainers) System.out.println(addressContainer);
         if(Main.DEBUG) System.out.println("total: " + addressContainers.size());
@@ -53,12 +55,14 @@ public class GoogleAPI {
         if(Main.DEBUG) System.out.println("");*/
 
         // get all possible relations
+        Main.setProgress(Progress.RELATIONS);
         ArrayList<RelationContainer> relationContainers = getRelations(addressContainers);
         if(Main.DEBUG) System.out.println("Relations:");
         if(Main.DEBUG) for(RelationContainer relationContainer : relationContainers) System.out.println(relationContainer);
         if(Main.DEBUG) System.out.println("total: " + relationContainers.size());
         if(Main.DEBUG) System.out.println("");
 
+        Main.setProgress(Progress.CHEAPEST_ROUTES);
         ArrayList<RouteContainer> cheapestRoutes = getCheapestRoutes(addressContainers, relationContainers);
         if(Main.DEBUG) System.out.println("Cheapest route(s):");
         if(Main.DEBUG) for(RouteContainer routeContainer : cheapestRoutes) System.out.println(routeContainer);
@@ -66,10 +70,12 @@ public class GoogleAPI {
         if(Main.DEBUG) System.out.println("");
 
         RouteContainer routeContainer = cheapestRoutes.get(0);
-        System.out.println("Duration : " + new DurationHandler(routeContainer.getDuration()));
-        System.out.println("Distance : " + new DistanceHandler(routeContainer.getDistance()));
-        System.out.println("Energy   : " + new EnergyHandler(routeContainer.getCost()));
-        // Output: time, distance, energy
+        if(Main.DEBUG) System.out.println("Duration : " + new DurationHandler(routeContainer.getDuration()));
+        if(Main.DEBUG) System.out.println("Distance : " + new DistanceHandler(routeContainer.getDistance()));
+        if(Main.DEBUG) System.out.println("Energy   : " + new EnergyHandler(routeContainer.getCost()));
+
+
+        Main.setProgress(Progress.FINISHED);
 
     }
 
@@ -80,7 +86,7 @@ public class GoogleAPI {
      * @return The list of addresses containing lat|lng pairs
      * @throws IOException On GoogleAPI error
      */
-    private static ArrayList<AddressContainer> getLatLang(ArrayList<String> waypoints) throws IOException {
+    private static ArrayList<AddressContainer> getLatLng(ArrayList<String> waypoints) throws IOException {
 
         ArrayList<AddressContainer> addressContainers = new ArrayList<>();
 
@@ -239,21 +245,15 @@ public class GoogleAPI {
         return cheapestRoutes;
     }
 
-    public static ElevationResult[] getExactElevation(AddressContainer start, AddressContainer end, int samples) throws IOException {
+
+    public static ElevationResult[] getExactElevation(AddressContainer start, AddressContainer end) throws IOException {
 
         ElevationResult[] results = new ElevationResult[0];
         try {
-            results = ElevationApi.getByPath(CONTEXT_ELEVATION, samples, start.getLatLng(), end.getLatLng()).await();
+            results = ElevationApi.getByPath(CONTEXT_ELEVATION, Main.SETTINGS_HANDLER.getSamples(), start.getLatLng(), end.getLatLng()).await();
         } catch (InterruptedException | ApiException e) {
             e.printStackTrace();
         }
-
-        /*Gson gson = new GsonBuilder().setPrettyPrinting().create();
-        for(ElevationResult elevationResult : results) {
-            double elevation = elevationResult.elevation;
-            LatLng latLng = elevationResult.location;
-            System.out.println(gson.toJson(elevationResult));
-        }*/
 
         return results;
 

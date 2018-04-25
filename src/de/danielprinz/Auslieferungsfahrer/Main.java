@@ -2,15 +2,14 @@ package de.danielprinz.Auslieferungsfahrer;
 
 import com.sun.javafx.tk.FontLoader;
 import com.sun.javafx.tk.Toolkit;
+import de.danielprinz.Auslieferungsfahrer.enums.Progress;
 import de.danielprinz.Auslieferungsfahrer.gui.AlertBox;
+import de.danielprinz.Auslieferungsfahrer.handlers.SettingsHandler;
 import javafx.application.Application;
 import javafx.application.Platform;
 import javafx.geometry.Insets;
 import javafx.scene.Scene;
-import javafx.scene.control.Button;
-import javafx.scene.control.Label;
-import javafx.scene.control.TextField;
-import javafx.scene.control.TextInputControl;
+import javafx.scene.control.*;
 import javafx.scene.image.Image;
 import javafx.scene.layout.GridPane;
 import javafx.stage.Stage;
@@ -21,7 +20,11 @@ import java.util.stream.Collectors;
 
 public class Main extends Application {
 
-    public static final boolean DEBUG = true;
+    public static final boolean DEBUG = true; // TODO disable debug for release
+    public static final SettingsHandler SETTINGS_HANDLER = new SettingsHandler(100, 0.9, 1.2, 100);
+    private final static String WINDOW_TITLE = "Der Auslieferungsfahrer";
+
+    private static Stage window;
 
     public static void main(String[] args) {
         launch(args);
@@ -31,16 +34,32 @@ public class Main extends Application {
 
     @Override
     public void start(Stage primaryStage) throws Exception {
-        Stage window = primaryStage;
-        window.setTitle("Der Auslieferungsfahrer");
+        window = primaryStage;
+        window.setTitle(WINDOW_TITLE);
         window.getIcons().add(new Image(Main.class.getResourceAsStream("delivery-truck.png")));
+
+        MenuBar menuBar = new MenuBar();
+
+        //File menu
+        Menu fileMenu = new Menu("Datei");
+        MenuItem settings = new MenuItem("Einstellungen");
+        settings.setOnAction(e -> {
+            SettingsGUI.display();
+        });
+        fileMenu.getItems().add(settings);
+        //fileMenu.getItems().add(new SeparatorMenuItem());
+        menuBar.getMenus().addAll(fileMenu);
+
+
+        GridPane mainPane = new GridPane();
+        mainPane.add(menuBar, 0, 0);
 
         // Grid pane
         GridPane grid = new GridPane();
         grid.setPadding(new Insets(10, 10, 10, 10));
         grid.setVgap(8);
         grid.setHgap(10);
-
+        mainPane.add(grid, 0, 1);
 
         // Create all labels and buttons
         FontLoader fontLoader = Toolkit.getToolkit().getFontLoader();
@@ -84,6 +103,7 @@ public class Main extends Application {
 
             search.setDisable(true);
             for(TextField textField : textFields) textField.setDisable(true);
+            menuBar.setDisable(true);
             ArrayList<String> waypoints = new ArrayList<>(textFields.stream().map(TextInputControl::getText).filter(s -> !s.equals("")).collect(Collectors.toList()));
 
             new Thread(() -> {
@@ -96,6 +116,7 @@ public class Main extends Application {
                 Platform.runLater(() -> {
                     search.setDisable(false);
                     for(TextField textField : textFields) textField.setDisable(false);
+                    menuBar.setDisable(false);
                 });
             }).start();
 
@@ -108,11 +129,19 @@ public class Main extends Application {
         grid.getChildren().addAll(textFields);
         grid.getChildren().addAll(search);
 
-        Scene scene = new Scene(grid, 400, 410);
+        Scene scene = new Scene(mainPane, 400, 430);
         window.setScene(scene);
         window.show();
 
     }
 
+
+    public static void setProgress(Progress progress) {
+        if(progress.equals(Progress.FINISHED)) {
+            Platform.runLater(() -> window.setTitle(WINDOW_TITLE));
+            return;
+        }
+        Platform.runLater(() -> window.setTitle(WINDOW_TITLE + " (" + progress.getProgressNumber() + "/" + (Progress.FINISHED.getProgressNumber() - 1) + ")"));
+    }
 
 }
