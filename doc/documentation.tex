@@ -1,0 +1,179 @@
+%%% Start of file with declaration of basic document class %%%
+\documentclass[a4paper,
+               oneside,
+               bibliography=totoc,
+               parskip=half]{scrbook} 
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage[english,ngerman]{babel}
+\selectlanguage{ngerman}
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%% GENERAL DECLARATIONS %%%%%%%%%%%%%%%%%%%%%%%%%%%%% Add infos here
+%%% Title of the Thesis %%%
+\def\title{Der Auslieferungsfahrer}
+\def	\subtitle{Finde die kürzeste Route und hilf dem Traveling Salesman!}
+
+%%% Author of the Thesis %%%
+\def\author{Daniel Prinz}
+
+%%% Use "new" template cover (uncomment for "old" blue FH waves cover) %%%
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% PACKAGES & OPTIONS %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%% Use of an extended color table %%%
+\usepackage[usenames,dvipsnames]{color}
+\usepackage[usenames,dvipsnames]{xcolor}
+% Define the (old) FHTW corporate design colors %
+\definecolor{twgray}{RGB}{99,106,111}
+\definecolor{twgreen}{RGB}{0,146,110}
+\definecolor{twblue}{RGB}{10,143,217}
+
+%%% Package(s) containing sets of mathematical symbols %%%
+\usepackage{amsmath,amssymb,amsfonts,amstext}
+
+%%% Package to enable hyperrefs incl. color highlighting %%%
+% Refer to ftp://tug.ctan.org/pub/tex-archive/macros/latex/contrib/hyperref/doc/options.pdf
+\usepackage[colorlinks=true,
+    linkcolor=black,
+    citecolor=black,
+    urlcolor=twblue,
+    bookmarks=true,
+    bookmarksopen=true,
+    bookmarksopenlevel=3,
+    plainpages=false,
+    pdfpagelabels=true]{hyperref}
+    
+%%% Package to maintain and use acronyms %%%
+\usepackage[printonlyused]{acronym}
+
+%%% Package to generate blindtext (for a preliminary "look and feel") %%%
+\usepackage{blindtext}
+
+%%% Package to (more or less) optimally place figures, tables, etc. %%%
+\usepackage{float}
+
+%%% Packages to support multi-rows/columns in tables %%%
+\usepackage{multirow}
+\usepackage{multicol}
+
+%%% Package to use helvetica fonts for text formatting %%%
+\usepackage{helvet}
+
+%%% Package to adjust line spacings %%%
+\usepackage{setspace}
+
+%%% Package to format page headers and footers %%%
+\usepackage[automark,headsepline]{scrlayer-scrpage}
+\clearpairofpagestyles
+% Define footer & header
+\cfoot[\pagemark]{\pagemark}
+\lehead{\headmark}
+\rohead{\headmark}
+
+%%% Package to suppress wrongly asserted warning about TOC %%%
+\usepackage{scrhack}
+
+%%% Package to define caption style of images, tables, etc. %%%
+\usepackage{caption}
+% Caption of tables should be left aligned (instead of centered)
+\captionsetup[table]{singlelinecheck=false}
+
+%%% Package to append pages of an existing PDF document %%%
+\usepackage{pdfpages}
+
+%%% Package for easier referencing (\cref{} & \Cref{}) %%%%
+\usepackage[ngerman]{cleveref}
+% Define lables for listings
+\crefname{lstlisting}{Listing}{Listings}
+\Crefname{lstlisting}{Listing}{Listings}
+
+%%% Package to allow combining several images to own figure %%%
+\usepackage{subfig}
+
+%%% Package to format default page layout %%%
+\usepackage[margin=2cm]{geometry}
+
+%%% CUSTOM %%%
+\usepackage{booktabs} % http://ctan.org/pkg/booktabs
+
+%%% Global formatting %%%%
+% Define for text usable height per page
+\setlength{\textheight}{245mm}
+% Enable for colored headlines
+\setkomafont{chapter}{\color{twblue}\mdseries\Huge}
+\setkomafont{section}{\color{twblue}\mdseries\huge}
+\setkomafont{subsection}{\color{twblue}\mdseries\Large}
+\setkomafont{subsubsection}{\bfseries\normalsize}
+% Define default font size and family
+\renewcommand*{\familydefault}{\sfdefault}\selectfont
+\normalfont\selectfont
+
+%%% Additional (helpful) stuff %%%
+% Extended listing definitions (incl. syntax highlighting styles)
+\input{style/listings.tex}
+% Load global definitions (incl. e.g., own commands)
+\input{global_defines.tex}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+%%%%%%%%%%%%%%%%%%%%%%%%% START OF THE ACTUAL DOCUMENT %%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{document}
+    % Initiate header and footer (as defined above) %
+    \pagestyle{scrheadings}
+    
+    % Include cover page %
+    \input{cover_page.tex}
+    \newpage
+
+    % Include German abstract (Kurzfassung) %
+    \input{abstract_german.tex}
+    \newpage
+    
+    % Print table of contents %
+    \currentpdfbookmark{Contents}{chap:contents}
+    \label{chap:contents}
+    \tableofcontents\thispagestyle{empty}
+    \newpage
+    
+    % Start page counting here with 1 %
+    \setcounter{page}{1}
+    
+    %%%%% MAIN CONTENT %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+    \input{content/01-anforderungen.tex}
+    \input{content/02-unterschiede.tex}
+    \input{content/03-algorithmus.tex}
+    \input{content/04-gui.tex}
+    \input{content/05-bekannte_probleme.tex}
+    %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+    \newpage
+    
+    % Include Bibliography ... %
+    %\bibliographystyle{IEEEtran}
+    %\bibliography{Bibliography}
+    
+    % Include List of Figures %
+    \listoffigures
+    \addcontentsline{toc}{chapter}{\nonumberline Abbildungsverzeichnis}
+    
+    % Include List of Tables %
+    \listoftables 
+    \addcontentsline{toc}{chapter}{\nonumberline Tabellenverzeichnis}
+    
+    % Include List of Listings %
+    \renewcommand\lstlistlistingname{Listingsverzeichnis}
+    \lstlistoflistings
+    \addcontentsline{toc}{chapter}{\nonumberline Listingsverzeichnis}
+    
+    % Include List of Abbreviations %
+    \chapter*{Abkürzungsverzeichnis}
+    % Load acronym definitions from separate file %
+    \begin{acronym}
+        \input{abbreviations.tex}
+    \end{acronym}
+    \addcontentsline{toc}{chapter}{\nonumberline Abkürzungsverzeichnis}
+\end{document}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

@@ -1,0 +1,17 @@
+\chapter{Anforderungen an das Programm}
+\label{ch:anforderungen}
+
+Es soll ein Programm entwickelt werden, das alle Anforderungen abdeckt. Es soll die Möglichkeit geboten werden, einen Startpunkt und bis zu 10 weitere Zieladressen anzugeben, wobei eine \acs{GUI} nicht unbedingt notwendig ist. Bei der Routenplanung geht es dann in erster Linie um die Kosten der Fahrt für einen Elektro-LKW, weniger um die gefahrene Strecke, wobei diese natürlich zuvor in die Berechnung mit einfließt. Dabei gilt der in \cref{tab:energieverbrauch} angegebenen Energieverbrauch.
+
+\begin{table}[H]
+	\caption{Der Energieverbrauch des Elektro-LKWs
+		\label{tab:energieverbrauch}}
+	\begin{center}
+		\begin{tabular}{c|c}
+			Steigung & Energieverbrauch \\ \hline
+			Bergab (Steigung < 3 \%) & 90kw/h pro 100km \\ \hline
+			Normal & 100kw/h pro 100km \\ \hline
+			Bergauf (Steigung > 3 \%) & 120kw/h pro 100km \\
+		\end{tabular}
+	\end{center}
+\end{table}

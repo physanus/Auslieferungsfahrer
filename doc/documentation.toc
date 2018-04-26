@@ -1,0 +1,23 @@
+\babel@toc {ngerman}{}
+\babel@toc {ngerman}{}
+\babel@toc {ngerman}{}
+\contentsline {chapter}{\numberline {1}Anforderungen an das Programm}{1}{chapter.1}
+\contentsline {chapter}{\numberline {2}Unterschiede gegen\IeC {\"u}ber dem einfachen \acl {TSP}}{2}{chapter.2}
+\contentsline {chapter}{\numberline {3}Der Algorithmus}{3}{chapter.3}
+\contentsline {section}{\numberline {3.1}Basis}{3}{section.3.1}
+\contentsline {section}{\numberline {3.2}Testing}{4}{section.3.2}
+\contentsline {section}{\numberline {3.3}Gleiche Wegkosten - Gemeinsam oder getrennt betrachten?}{5}{section.3.3}
+\contentsline {section}{\numberline {3.4}Wegkostenberechnung: Folgen, nicht folgen oder nur teilweise folgen?}{6}{section.3.4}
+\contentsline {section}{\numberline {3.5}Robustheitspr\IeC {\"u}fung}{6}{section.3.5}
+\contentsline {subsection}{\numberline {3.5.1}Standard H\IeC {\"o}henfeststellung}{7}{subsection.3.5.1}
+\contentsline {subsection}{\numberline {3.5.2}Fortgeschrittene H\IeC {\"o}henfeststellung}{7}{subsection.3.5.2}
+\contentsline {chapter}{\numberline {4}Die GUI}{8}{chapter.4}
+\contentsline {chapter}{\numberline {5}Bekannte Probleme}{9}{chapter.5}
+\contentsline {subsection}{\numberline {5.0.1}GUI: Alternative Routen}{9}{subsection.5.0.1}
+\contentsline {subsection}{\numberline {5.0.2}GUI: Polylinien}{9}{subsection.5.0.2}
+\contentsline {subsection}{\numberline {5.0.3}Anfragen zusammenfassen}{9}{subsection.5.0.3}
+\contentsline {subsection}{\numberline {5.0.4}Abfahrzeit}{9}{subsection.5.0.4}
+\contentsline {chapter}{Abbildungsverzeichnis}{10}{chapter*.16}
+\contentsline {chapter}{Tabellenverzeichnis}{11}{chapter*.17}
+\contentsline {chapter}{Listingsverzeichnis}{12}{chapter*.18}
+\contentsline {chapter}{Abk\IeC {\"u}rzungsverzeichnis}{13}{chapter*.19}

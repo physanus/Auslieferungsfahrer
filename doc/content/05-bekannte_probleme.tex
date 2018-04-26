@@ -1,0 +1,20 @@
+\chapter{Bekannte Probleme}
+\label{ch:problems}
+
+Während der Entwicklung traten Probleme auf, die nicht behoben wurden.
+
+\subsection{GUI: Alternative Routen}
+\label{sec:alternative-routes}
+Der Algorithmus unterstützt alternative Routen, die per Zufall genauso günstig sind wie die dargestellte Route. Diese sind jedoch aus Zeitgründen nicht in die GUI implementiert.
+
+\subsection{GUI: Polylinien}
+\label{sec:polylines}
+Eine der Polylinien der Static Map scheint manchmal als gerader Strich dargestellt zu werden. Ob es sich dabei um ein Problem der Anfrage an die Google-API oder um ein Problem beim Auswerten der Rückgabewerte handelt, ist zur Zeit unbekannt. Weiterhin tritt ein Fehler auf, wenn zu viele Polylinien angefragt werden (die Grenze ist zwichen 641 und 1934 Polylinien). Dies kann behoben werden, indem z.B. jede dritte oder vierte Polylinie, je nach Länge, für das Rendern entfernt wird. Dies wurde aus zeitlichen Gründen nicht implementiert, stattdessen wird nur eine Wegbeschreibung angezeigt.
+
+\subsection{Anfragen zusammenfassen}
+\label{anfragen-zusammenfassen}
+Google bietet bei einigen APIs die Möglichkeit, Anfragen zusammenzufassen. Dies erhöht den Umfang der Auswertung der Daten jedoch leicht, weshalb auch diese Lösung aus zeitlichen Gründen nicht implementiert wurde. Weiterhin kann ein TimeManager implementiert werden, der aufzeigt, wie viel Zeit des Algorithmus für API-Anfragen oder Rechenzeit aufgewendet werden müssen. Anhand dessen kann weiter optimiert werden.
+
+\subsection{Abfahrzeit}
+\label{abfahrzeit}
+In dem Programm wird der Verkehr auf den Straßen berücksichtigt. Wenn die Abfahrzeit später ist, sollte dies in den Einstellungen geändert werden können. Aus zeitlichen Gründen nicht implementiert.

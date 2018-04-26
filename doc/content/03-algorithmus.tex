@@ -1,0 +1,366 @@
+\chapter{Der Algorithmus}
+\label{ch:algorithmus}
+
+\section{Basis}
+\label{sec:basis}
+Zunächst wurden einige einfache Analysen manuell durchgeführt. Hierzu wurde ein Cluster von 4~Wegpunkten (A, B, C und D) aufgebaut, die jeweils zweifach mit allen anderen Punkten verbunden wurden (Hinweg und Rückweg). Die Gewichtungen der Wege wurde zufällig zwischen 2~und~9 vorgenommen. 
+
+\begin{figure}[H]
+	\centering
+	\subfloat{
+		\begin{tabular}[H]{cc}
+			AB - 4 & BA - 7 \\
+			AC - 7 & CA - 9 \\
+			AD - 7 & DA - 3 \\
+			BC - 2 & CB - 2 \\
+			BD - 8 & BD - 6 \\
+			CD - 4 & CD - 6
+		\end{tabular}
+	}	
+	\caption{Erste Wegkosten
+		\label{fig:erste-wegkosten}}
+\end{figure}
+
+Daraufhin wurden manuell alle möglichen Wegkombinationen gebildet und die Gesamtkosten für die jeweiligen Routen ausgerechnet. 
+
+\begin{figure}[H]
+	\centering
+	\subfloat[Startpunkt A]{
+		\begin{tabular}[H]{c}
+			ABCDA = 13 \\
+			ABDCA = 27 \\
+			ACBDA = 20 \\
+			ACDBA = 24 \\
+			ADBCA = 24 \\
+			ADCBA = 22
+		\end{tabular}
+		\label{subfig:erste-startpunkt-a}
+	}
+	\subfloat[Startpunkt B]{
+		\begin{tabular}[H]{c}
+			BACDB = 24 \\
+			BADCB = 22 \\
+			BCADB = 24 \\
+			BCDAB = 13 \\
+			BDACB = 20 \\
+			BDCAB = 27
+		\end{tabular}
+		\label{subfig:erste-startpunkt-b}
+	}
+	\subfloat[Startpunkt C]{
+		\begin{tabular}[H]{c}
+			CABDC = 27 \\
+			CADBC = 24 \\
+			CBADC = 22 \\
+			CBDAC = 20 \\
+			CDABC = 13 \\
+			CDBAC = 24
+		\end{tabular}
+		\label{subfig:erste-startpunkt-c}
+	}
+	\subfloat[Startpunkt D]{
+		\begin{tabular}[H]{c}
+			DABCD = 13 \\
+			DACBD = 20 \\
+			DBACD = 24 \\
+			DBCAD = 24 \\
+			DCABD = 27 \\
+			DCBAD = 22
+		\end{tabular}
+		\label{subfig:erste-startpunkt-d}
+	}
+	
+	\caption{Erste Wegberechnung
+		\label{fig:erste-wegberechnung}}
+\end{figure}
+
+
+Aus \cref{fig:erste-wegberechnung} kann nun der günstigste Weg abgelesen werden (Wegkosten = 13). Es fällt auf, dass alle Wegkosten in unterschiedlicher Reihenfolge in jeder einzelnen Spalte vorkommen und dabei die Reihenfolge der besuchten Orte gleich ist. Es reicht daher aus, für einen beliebigen Startpunkt den günstigsten Weg zu finden und die Orte solange in ihrer Position zu shiften, bis der Startpunkt übereinstimmt. Beachten muss man hierbei nur, dass der Endpunkt nicht geshiftet werden darf, sondern immer synchron zum Startpunkt bleibt.
+
+\begin{minipage}{\textwidth}
+	\vspace{-10px}
+	\begin{lstlisting}[style=VHDL,label=pseudocode,caption=Algorithmus Pseudocode, gobble=4]
+	for(startpunkt : [A,B,C,D]) {
+		while(!alleBesucht()) {
+			guenstigstenNachbarnFinden();
+			zuNachbarnLaufen();
+		}
+	}
+	\end{lstlisting}
+\end{minipage}
+
+In \cref{pseudocode} wird der Algorithmus noch einmal verdeutlicht.
+
+
+\section{Testing}
+\label{sec:testing}
+Der so entwickelte Algorithmus wurde anschließend weiteren Test unterzogen, um auch auf Spezialfälle eingehen oder Optimierungen finden zu können. Zunächst wurde der Datensatz hierfür leicht verändert, indem eine ursprünglich teure Wegstrecke deutlich vergünstigt wurde. Es wurde erwartet, dass nun eine neue Wegstrecke gefunden wird, die günstiger als zuvor ist.
+
+\begin{figure}[H]
+	\centering
+	\subfloat{
+		\begin{tabular}[H]{cc}
+			AB - 4 & BA - 7 \\
+			AC - 7 & CA - 9 \\
+			AD - 7 & DA - 3 \\
+			BC - 2 & CB - 2 \\
+			\textbf{BD - 1} & BD - 6 \\
+			CD - 4 & CD - 6
+		\end{tabular}
+	}	
+	\caption{Zweite Wegkosten
+		\label{fig:zweite-wegkosten}}
+\end{figure}
+
+Auch für diesen Durchlauf wurden händisch die zu erwartenden Ergebnisse ausgerechnet, um einen Fehler oder mögliche Optimierungen des Algorithmus schnell finden zu können.
+
+\begin{figure}[H]
+	\centering
+	\subfloat[Startpunkt A]{
+		\begin{tabular}[H]{c}
+			ABCDA = 13 \\
+			\textbf{ABDCA = 20} \\
+			\textbf{ACBDA = 13} \\
+			ACDBA = 24 \\
+			ADBCA = 24 \\
+			ADCBA = 22
+		\end{tabular}
+		\label{subfig:zweite-startpunkt-a}
+	}
+	\subfloat[Startpunkt B]{
+		\begin{tabular}[H]{c}
+			BACDB = 24 \\
+			BADCB = 22 \\
+			BCADB = 24 \\
+			BCDAB = 13 \\
+			\textbf{BDACB = 13} \\
+			\textbf{BDCAB = 20}
+		\end{tabular}
+		\label{subfig:zweite-startpunkt-b}
+	}
+	\subfloat[Startpunkt C]{
+		\begin{tabular}[H]{c}
+			\textbf{CABDC = 20} \\
+			CADBC = 24 \\
+			CBADC = 22 \\
+			\textbf{CBDAC = 13} \\
+			CDABC = 13 \\
+			CDBAC = 24
+		\end{tabular}
+		\label{subfig:zweite-startpunkt-c}
+	}
+	\subfloat[Startpunkt D]{
+		\begin{tabular}[H]{c}
+			DABCD = 13 \\
+			\textbf{DACBD = 13} \\
+			DBACD = 24 \\
+			DBCAD = 24 \\
+			\textbf{DCABD = 20} \\
+			DCBAD = 22
+		\end{tabular}
+		\label{subfig:zweite-startpunkt-d}
+	}
+	
+	\caption{Zweite Wegberechnung
+		\label{fig:zweite-wegberechnung}}
+\end{figure}
+
+Die Bereiche, in denen sich im Vergleich zur ersten Wegberechnung Daten verändert haben, wurden in \cref{fig:zweite-wegberechnung} \textbf{fett} hervorgehoben.
+Die durch den in \cref{sec:basis} beschriebenen Algorithmus gewonnenen, günstigsten Wegstrecken für die jeweiligen Startpunkte wurden in \cref{fig:zweite-algorithmus} dargestellt. Der Algorithmus wird hierdurch bestätigt.
+
+\begin{figure}[H]
+	\centering
+	\subfloat{
+		\begin{tabular}[H]{cc}
+			ABDCA = 20 \\
+			BDACB = 13 \\
+			CBDAC = 13 \\
+			DABCD = 13
+		\end{tabular}
+	}	
+	\caption{Algorithmus auf zweite Wegkosten angewandt
+		\label{fig:zweite-algorithmus}}
+\end{figure}
+
+
+\section{Gleiche Wegkosten - Gemeinsam oder getrennt betrachten?}
+\label{sec:gleiche-wegkosten}
+Die Differenzierung \glqq{}günstiger\grqq{} oder \glqq{}teurer\grqq{} ist nicht immer ganz so einfach. In den beiden bisherigen Beispielen kam es nicht vor, dass die Wegstrecken von einem Punkt aus gleich teuer -- oder gleich günstig -- waren. Das soll sich nun ändern. Die neuen Kosten werden in \cref{fig:dritte-wegkosten} aufgeführt. Die Wege vom Wegpunkt B nach C und D kosten jetzt beide 1.
+Wir berechnen erneut die zu erwartenden Kosten zunächst manuell und dann mit Hilfe des Algorithmus.
+
+\begin{figure}[H]
+	\centering
+	\subfloat{
+		\begin{tabular}[H]{cc}
+			AB - 4 & BA - 7 \\
+			AC - 7 & CA - 9 \\
+			AD - 7 & DA - 3 \\
+			\textbf{BC - 1} & CB - 2 \\
+			BD - 1 & BD - 6 \\
+			CD - 4 & CD - 6
+		\end{tabular}
+	}	
+	\caption{Dritte Wegkosten
+		\label{fig:dritte-wegkosten}}
+\end{figure}
+
+Es zeigt sich, dass auch in diesem Fall die günstigsten Wegkosten gefunden wurden. Es stellt sich jedoch schnell die nächste Frage, ob man bei einer Kostengleichheit keinem, nur einem oder allem Wegen folgen muss. War es nur Zufall, dass die Wegkosten 12 mit dem Startpunkt C auf Anhieb gefunden werden konnten?
+
+\begin{figure}[H]
+	\centering
+	\subfloat[Startpunkt A]{
+		\begin{tabular}[H]{c}
+			\textbf{ABCDA = 12} \\
+			ABDCA = 20 \\
+			ACBDA = 13 \\
+			ACDBA = 24 \\
+			\textbf{ADBCA = 23} \\
+			ADCBA = 22
+		\end{tabular}
+		\label{subfig:dritte-startpunkt-a}
+	}
+	\subfloat[Startpunkt B]{
+		\begin{tabular}[H]{c}
+			BACDB = 24 \\
+			BADCB = 22 \\
+			\textbf{BCADB = 23} \\
+			\textbf{BCDAB = 12} \\
+			BDACB = 13 \\
+			BDCAB = 20
+		\end{tabular}
+		\label{subfig:dritte-startpunkt-b}
+	}
+	\subfloat[Startpunkt C]{
+		\begin{tabular}[H]{c}
+			CABDC = 20 \\
+			\textbf{CADBC = 23} \\
+			CBADC = 22 \\
+			CBDAC = 13 \\
+			\textbf{CDABC = 12} \\
+			CDBAC = 24
+		\end{tabular}
+		\label{subfig:dritte-startpunkt-c}
+	}
+	\subfloat[Startpunkt D]{
+		\begin{tabular}[H]{c}
+			\textbf{DABCD = 12} \\
+			DACBD = 13 \\
+			DBACD = 24 \\
+			\textbf{DBCAD = 23} \\
+			DCABD = 20 \\
+			DCBAD = 22
+		\end{tabular}
+		\label{subfig:dritte-startpunkt-d}
+	}
+	
+	\caption{Dritte Wegberechnung
+		\label{fig:dritte-wegberechnung}}
+\end{figure}
+
+\begin{figure}[H]
+	\centering
+	\subfloat{
+		\begin{tabular}[H]{cccccc}
+			&&&&C D A~~=~~12\\
+			1:~~A&---&B&\begin{tabular}[H]{c} $\slash$\\$\backslash$\end{tabular}\\
+			&&&&D C A~~=~~20\\
+			
+			\\
+			
+			&&C&---& D A B~~=~~12\\
+			2:~~B&\begin{tabular}[H]{c} $\slash$\\$\backslash$\end{tabular}\\
+			&&D&---&A C B~~=~~13\\
+			
+			\\
+			
+			3:~~C&---&B&---&D A C~~=~~13\\
+			\\
+			4:~~D&---&A&---&B C D~~=~~12\\
+			
+			
+		\end{tabular}
+	}
+	\caption{Algorithmus auf dritte Wegkosten angewandt
+		\label{fig:dritte-algorithmus}}
+\end{figure}
+
+
+
+\section{Wegkostenberechnung: Folgen, nicht folgen oder nur teilweise folgen?}
+\label{sec:wegkostenberechnung}
+
+Um auch diese Problematik zufriedenstellend beantworten zu können, wurden die Testdaten aus der dritten Berechnung (\cref{fig:dritte-wegkosten}) so verändert, dass das Ergebnis deutlich wird. Durch einfache Überlegung kommt man zu dem Schluss, dass in jedem Fall allen neuen Zweigen gefolgt werden muss, da ansonsten bei zufälliger, wenn auch unwahrscheinlicher, Gleichheit aller Wege der verbleibenden Adresspunkte die Berechnung abbrechen würde. Da es nicht das Ziel ist, den LKW-Fahrer unentschlossen auf halber Wegstrecke stehen zu lassen, wird daher die Berechnung für alle Zweige durchgeführt. Sich zufällig für nur einen der Zweige zu entscheiden ist ebenfalls nicht korrekt, wie aus \cref{fig:dritte-algorithmus} ersichtlich wird. Die Entscheidung für  den unteren AB-Zweig würde in Verbindung mit einem etwas modifizierten Kostenschema zu einem falschen Endergebnis führen.
+
+
+\section{Robustheitsprüfung}
+\label{sec:robustheitsprüfung}
+
+Ein letztes Mal wird der Algorithmus jetzt mit den nachfolgenden Daten getestet. Sie sind so gewählt, dass ein Subzweig erreicht wird. Der Algorithmus kann aber auch hier den günstigsten Weg finden -- zumal die Wahrscheinlichkeit eines gleich günstigen Wegs in der Realität sehr gering ist (hierzu wäre eine so genaue Kombination aus Strecke und Gefälle/Steigung notwendig, dass sehr viele Nachkommastellen exakt übereinstimmen).
+
+
+
+\begin{figure}[H]
+	\centering
+	\subfloat{
+		\begin{tabular}[H]{cc}
+			AB - 4 & BA - 7 \\
+			\textbf{AC - 4} & CA - 9 \\
+			AD - 7 & DA - 3 \\
+			BC - 1 & CB - 2 \\
+			BD - 1 & BD - 6 \\
+			CD - 4 & CD - 6
+		\end{tabular}
+	}	
+	\caption{Vierte Wegkosten
+		\label{fig:vierte-wegkosten}}
+\end{figure}
+
+
+\begin{figure}[H]
+	\centering
+	\subfloat{
+		\begin{tabular}[H]{ccccc}			
+			
+			&&&&C D A~~=~~12\\
+			&&B&\begin{tabular}[H]{c} $\slash$\\$\backslash$\end{tabular}\\
+			1:~~A&\begin{tabular}[H]{c} $\slash$\\$\backslash$\end{tabular} 
+				&&&D C A~~=~~20\\
+			&&\textbf{C}&\textbf{---}&\textbf{B D A~~=~~10}\\
+			
+			\\
+			
+			&&C&---&D A B~~=~~12\\
+			2:~~B& \begin{tabular}[H]{c} $\slash$\\$\backslash$\end{tabular}\\
+			&&\textbf{D}&\textbf{---}&\textbf{A C B~~=~~10}\\
+			
+			\\
+			
+			\textbf{3:~~C}&\textbf{---}&\textbf{B}&\textbf{---}&\textbf{D A C~~=~~10}\\
+			
+			\\
+			
+			&&&&B C D~~=~~12\\
+			4:~~D&---&A&\begin{tabular}[H]{c} $\slash$\\$\backslash$\end{tabular}\\
+			&&&&\textbf{C B D~~=~~10}\\
+			
+		\end{tabular}
+	}
+	\caption{Algorithmus auf vierte Wegkosten angewandt
+		\label{fig:vierte-algorithmus}}
+\end{figure}
+
+
+
+
+
+
+
+
+
+\subsection{Standard Höhenfeststellung}
+\label{sec:standard-elevation}
+Die einfache Vorgehensweise ist es, die Höhenunterschiede für die Berechnung der Kosten durch das Delta der Höhen der beiden Punkte zu bilden. Für den Anfang ist das ausreichend, für das weitere Vorgehen sollte jedoch eine Methode wie in \cref{sec:advanced-elevation} verwendet werden.
+
+\subsection{Fortgeschrittene Höhenfeststellung}
+\label{sec:advanced-elevation}
+Die fortgeschrittene Höhenmessung besteht darin, die Höhenunterschiede differenziert auszurechnen, um auch Höhenunterschiede auf der Strecke berücksichtigen zu können. In diesem Programm wurde dies durch die von den Weganweisungen der Google-API generierten Zwischenpunkte  implementiert.
