@@ -1,6 +1,6 @@
-\babel@toc {ngerman}{}
-\babel@toc {ngerman}{}
-\babel@toc {ngerman}{}
+\select@language {ngerman}
+\select@language {ngerman}
+\select@language {ngerman}
 \contentsline {chapter}{\numberline {1}Anforderungen an das Programm}{1}{chapter.1}
 \contentsline {chapter}{\numberline {2}Unterschiede gegen\IeC {\"u}ber dem einfachen \acl {TSP}}{2}{chapter.2}
 \contentsline {chapter}{\numberline {3}Der Algorithmus}{3}{chapter.3}
@@ -17,7 +17,7 @@
 \contentsline {subsection}{\numberline {5.0.2}GUI: Polylinien}{9}{subsection.5.0.2}
 \contentsline {subsection}{\numberline {5.0.3}Anfragen zusammenfassen}{9}{subsection.5.0.3}
 \contentsline {subsection}{\numberline {5.0.4}Abfahrzeit}{9}{subsection.5.0.4}
-\contentsline {chapter}{Abbildungsverzeichnis}{10}{chapter*.16}
-\contentsline {chapter}{Tabellenverzeichnis}{11}{chapter*.17}
-\contentsline {chapter}{Listingsverzeichnis}{12}{chapter*.18}
-\contentsline {chapter}{Abk\IeC {\"u}rzungsverzeichnis}{13}{chapter*.19}
+\contentsline {chapter}{Abbildungsverzeichnis}{10}{chapter*.15}
+\contentsline {chapter}{Tabellenverzeichnis}{11}{chapter*.16}
+\contentsline {chapter}{Listingsverzeichnis}{12}{chapter*.17}
+\contentsline {chapter}{Abk\IeC {\"u}rzungsverzeichnis}{13}{chapter*.18}
