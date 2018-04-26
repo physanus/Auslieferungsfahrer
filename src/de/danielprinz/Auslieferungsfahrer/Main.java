@@ -25,7 +25,7 @@ import java.util.stream.Collectors;
 
 public class Main extends Application {
 
-    public static final boolean DEBUG = true; // TODO disable debug for release
+    public static final boolean DEBUG = false; // TODO disable debug for release
     public static final SettingsHandler SETTINGS_HANDLER = new SettingsHandler(100, 0.9, 1.2);
     private final static String WINDOW_TITLE = "Der Auslieferungsfahrer";
 

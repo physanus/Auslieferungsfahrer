@@ -89,9 +89,9 @@ public class RouteContainer {
         return map;
     }
 
-    public void setMap(ArrayList<RelationContainer> relationContainers) throws InterruptedException, ApiException, IOException {
+    public void setMap() throws InterruptedException, ApiException, IOException {
         System.out.println(this);
-        map = GoogleAPI.getMap(relationContainers, this);
+        map = GoogleAPI.getMap(this);
     }
 
     /**
@@ -107,9 +107,10 @@ public class RouteContainer {
      * Closes the route so that the endpoint is equal to the startpoint
      * @param relationContainers The relations
      */
-    public void finish(List<RelationContainer> relationContainers) {
+    public void finish(List<RelationContainer> relationContainers) throws InterruptedException, ApiException, IOException {
         RelationContainer relationContainer = MethodProvider.getRelationByAddresses(relationContainers, this.getLastElement(), this.getFirstElement());
         this.addElement(this.getFirstElement(), relationContainer);
+        GoogleAPI.generateElevation(relationContainer);
     }
 
     public ArrayList<RelationContainer> getRelations() {

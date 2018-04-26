@@ -68,7 +68,7 @@ public class RouteViewer {
             Distance distance = relationContainer.getDistance();
 
             for(DirectionsStep directionsStep : relationContainer.getDirectionsSteps()) {
-                sb.append(directionsStep.htmlInstructions.replaceAll("", "").replaceAll("<.*?>", ""));
+                sb.append(directionsStep.htmlInstructions.replaceAll("<div style=\"font-size:0.9em\">", "\n").replaceAll("<.*?>", ""));
                 sb.append("\n");
                 if(duration != null && distance != null) {
                     sb.append("\tGesamtentfernung: " + distance.humanReadable);

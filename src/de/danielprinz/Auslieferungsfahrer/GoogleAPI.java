@@ -18,10 +18,7 @@ import javax.imageio.ImageIO;
 import java.awt.image.BufferedImage;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.List;
+import java.util.*;
 import java.util.stream.Collectors;
 
 public class GoogleAPI {
@@ -233,6 +230,12 @@ public class GoogleAPI {
             }
         }
 
+        System.out.println("======================================");
+        System.out.println("======================================");
+        System.out.println("======================================");
+        System.out.println("======================================");
+        System.out.println("======================================");
+        System.out.println("======================================");
         for(RouteContainer routeContainer : routeContainers) {
             routeContainer.finish(relationContainers);
         }
@@ -240,7 +243,9 @@ public class GoogleAPI {
         // lets find the route with the lowest cost
         ArrayList<RouteContainer> cheapestRoutes = MethodProvider.getCheapestRoutes(routeContainers);
         for(RouteContainer routeContainer : cheapestRoutes) {
-            routeContainer.setMap(relationContainers);
+            routeContainer.setMap();
+            System.out.println(Arrays.asList(routeContainer.getRelations().get(routeContainer.getRelations().size() - 1).getElevationResults()));
+            System.out.println(routeContainer.getRelations().get(routeContainer.getRelations().size() - 1).getElevationResults()[routeContainer.getRelations().get(routeContainer.getRelations().size() - 1).getElevationResults().length - 1].location);
         }
 
         return cheapestRoutes;
@@ -255,43 +260,50 @@ public class GoogleAPI {
      * @throws ApiException On GoogleAPI error
      */
     public static ArrayList<RelationContainer> generateElevation(ArrayList<RelationContainer> relationContainers) throws IOException, InterruptedException, ApiException {
-
         for(RelationContainer relationContainer : relationContainers) {
-
-            DirectionsResult result = DirectionsApi.getDirections(CONTEXT_DISTANCE_DIRECTIONS, relationContainer.getAddressContainer1().getAddress(), relationContainer.getAddressContainer2().getAddress())
-                    .alternatives(false)
-                    .departureTime(new DateTime().plus(Duration.standardMinutes(2))) // TODO in die Einstellungen übernehmen
-                    .mode(TravelMode.DRIVING)
-                    .language("de")
-                    .trafficModel(TrafficModel.BEST_GUESS)
-                    .await();
-            EncodedPolyline encodedPolyline = result.routes[0].overviewPolyline;
-            List<LatLng> latLngs = encodedPolyline.decodePath();
-
-            DirectionsStep[] directionsSteps = result.routes[0].legs[0].steps;
-            relationContainer.setDirectionsSteps(directionsSteps);
-
-            ElevationResult[] elevationResults = ElevationApi.getByPoints(CONTEXT_ELEVATION, (LatLng[]) (latLngs.toArray(new LatLng[0]))).await();
-            relationContainer.setElevationResults(elevationResults);
-            relationContainer.setEncodedPolyline(encodedPolyline);
-
+            generateElevation(relationContainer);
         }
 
         return relationContainers;
+    }
 
+    /**
+     * Generates elevation data by retrieving a route for the relation and saving its polyline data
+     * @param relationContainer The relation to be processed
+     * @return The relations
+     * @throws IOException On GoogleAPI error
+     * @throws InterruptedException On GoogleAPI error
+     * @throws ApiException On GoogleAPI error
+     */
+    public static void generateElevation(RelationContainer relationContainer) throws InterruptedException, ApiException, IOException {
+        DirectionsResult result = DirectionsApi.getDirections(CONTEXT_DISTANCE_DIRECTIONS, relationContainer.getAddressContainer1().getAddress(), relationContainer.getAddressContainer2().getAddress())
+                .alternatives(false)
+                .departureTime(new DateTime().plus(Duration.standardMinutes(2))) // TODO in die Einstellungen übernehmen
+                .mode(TravelMode.DRIVING)
+                .language("de")
+                .trafficModel(TrafficModel.BEST_GUESS)
+                .await();
+        EncodedPolyline encodedPolyline = result.routes[0].overviewPolyline;
+        List<LatLng> latLngs = encodedPolyline.decodePath();
+
+        DirectionsStep[] directionsSteps = result.routes[0].legs[0].steps;
+        relationContainer.setDirectionsSteps(directionsSteps);
+
+        ElevationResult[] elevationResults = ElevationApi.getByPoints(CONTEXT_ELEVATION, (LatLng[]) (latLngs.toArray(new LatLng[0]))).await();
+        relationContainer.setElevationResults(elevationResults);
+        relationContainer.setEncodedPolyline(encodedPolyline);
     }
 
 
     /**
      * Get the image of the map containing the route
-     * @param relationContainers The relations
      * @param routeContainer The route
      * @return The image
      * @throws InterruptedException On GoogleAPI error
      * @throws ApiException On GoogleAPI error
      * @throws IOException On GoogleAPI error
      */
-    public static BufferedImage getMap(ArrayList<RelationContainer> relationContainers, RouteContainer routeContainer) throws InterruptedException, ApiException, IOException {
+    public static BufferedImage getMap(RouteContainer routeContainer) throws InterruptedException, ApiException, IOException {
 
         ArrayList<LatLng> latLngs = new ArrayList<>();
         for(RelationContainer relationContainer : routeContainer.getRelations()) {
