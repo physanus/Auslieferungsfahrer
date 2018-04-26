@@ -1,5 +1,6 @@
 package de.danielprinz.Auslieferungsfahrer;
 
+import com.google.maps.model.LatLng;
 import de.danielprinz.Auslieferungsfahrer.containers.AddressContainer;
 import de.danielprinz.Auslieferungsfahrer.containers.RelationContainer;
 import de.danielprinz.Auslieferungsfahrer.containers.RouteContainer;
@@ -61,6 +62,25 @@ public class MethodProvider {
         }
 
         return cheapestRoutes;
+    }
+
+
+    /**
+     * Calculates the distance in m
+     * @param latLng1 First location
+     * @param latLng2 Second location
+     * @return distance
+     */
+    public static int distFrom(LatLng latLng1, LatLng latLng2) {
+        // https://stackoverflow.com/a/837957/6392214
+        double earthRadius = 6371000; //meters
+        double dLat = Math.toRadians(latLng2.lat-latLng1.lat);
+        double dLng = Math.toRadians(latLng2.lng-latLng1.lng);
+        double a = Math.sin(dLat/2) * Math.sin(dLat/2) +
+                Math.cos(Math.toRadians(latLng1.lat)) * Math.cos(Math.toRadians(latLng2.lat)) *
+                        Math.sin(dLng/2) * Math.sin(dLng/2);
+        double c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a));
+        return (int) (earthRadius * c);
     }
 
 }

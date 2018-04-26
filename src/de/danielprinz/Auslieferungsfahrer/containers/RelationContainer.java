@@ -2,6 +2,7 @@ package de.danielprinz.Auslieferungsfahrer.containers;
 
 import com.google.maps.model.*;
 import de.danielprinz.Auslieferungsfahrer.Main;
+import de.danielprinz.Auslieferungsfahrer.MethodProvider;
 import de.danielprinz.Auslieferungsfahrer.enums.Direction;
 
 public class RelationContainer {
@@ -92,26 +93,29 @@ public class RelationContainer {
 
         ///////////////////////////////////////////////////
 
-        double elevation = 0.0;
+        double cost = 0;
+        ElevationResult prev = null;
         for(ElevationResult elevationResult : elevationResults) {
-            elevation += elevationResult.elevation;
+            if(prev == null) {
+                prev = elevationResult; continue; }
+
+            int distance = MethodProvider.distFrom(prev.location, elevationResult.location);
+            double slope = (elevationResult.elevation - prev.elevation) / distance;
+
+            if(slope < -3) {
+                // energy retrieval
+                cost += Main.SETTINGS_HANDLER.getConsumption(Direction.DOWNHILL) / 100 / 1000 * distance;
+            }
+            if(slope > -3 && slope < 3) {
+                // normal behaviour
+                cost += Main.SETTINGS_HANDLER.getConsumption(Direction.NORMAL) / 100 / 1000 * distance;
+            } else {
+                // higher energy consumption
+                cost += Main.SETTINGS_HANDLER.getConsumption(Direction.UPHILL) / 100 / 1000 * distance;
+            }
         }
 
-
-        double slope = elevation / distance.inMeters; // Steigung in %
-
-        if(slope < -3) {
-            // energy retrieval
-            return Main.SETTINGS_HANDLER.getConsumption(Direction.DOWNHILL) / 100 / 1000 * distance.inMeters;
-        }
-        if(slope > -3 && slope < 3) {
-            // normal behaviour
-            return Main.SETTINGS_HANDLER.getConsumption(Direction.NORMAL) / 100 / 1000 * distance.inMeters;
-        } else {
-            // higher energy consumption
-            return Main.SETTINGS_HANDLER.getConsumption(Direction.UPHILL) / 100 / 1000 * distance.inMeters;
-        }
-
+        return cost;
     }
 
     /**

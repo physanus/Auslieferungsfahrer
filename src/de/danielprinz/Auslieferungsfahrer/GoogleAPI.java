@@ -10,6 +10,9 @@ import de.danielprinz.Auslieferungsfahrer.containers.RelationContainer;
 import de.danielprinz.Auslieferungsfahrer.containers.RouteContainer;
 import de.danielprinz.Auslieferungsfahrer.enums.Progress;
 import de.danielprinz.Auslieferungsfahrer.gui.AlertBox;
+import de.danielprinz.Auslieferungsfahrer.handlers.DistanceHandler;
+import de.danielprinz.Auslieferungsfahrer.handlers.DurationHandler;
+import de.danielprinz.Auslieferungsfahrer.handlers.EnergyHandler;
 import javafx.application.Platform;
 import org.joda.time.DateTime;
 import org.joda.time.Duration;
@@ -18,7 +21,10 @@ import javax.imageio.ImageIO;
 import java.awt.image.BufferedImage;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.List;
 import java.util.stream.Collectors;
 
 public class GoogleAPI {
@@ -74,10 +80,10 @@ public class GoogleAPI {
         if(Main.DEBUG) System.out.println("total: " + cheapestRoutes.size());
         if(Main.DEBUG) System.out.println("");
 
-        //RouteContainer routeContainer = cheapestRoutes.get(0);
-        //if(Main.DEBUG) System.out.println("Duration : " + new DurationHandler(routeContainer.getDuration()));
-        //if(Main.DEBUG) System.out.println("Distance : " + new DistanceHandler(routeContainer.getDistance()));
-        //if(Main.DEBUG) System.out.println("Energy   : " + new EnergyHandler(routeContainer.getCost()));
+        RouteContainer routeContainer = cheapestRoutes.get(0);
+        if(Main.DEBUG) System.out.println("Duration : " + new DurationHandler(routeContainer.getDuration()));
+        if(Main.DEBUG) System.out.println("Distance : " + new DistanceHandler(routeContainer.getDistance()));
+        if(Main.DEBUG) System.out.println("Energy   : " + new EnergyHandler(routeContainer.getCost()));
 
         Main.setProgress(Progress.FINISHED);
         return cheapestRoutes;
@@ -230,12 +236,6 @@ public class GoogleAPI {
             }
         }
 
-        System.out.println("======================================");
-        System.out.println("======================================");
-        System.out.println("======================================");
-        System.out.println("======================================");
-        System.out.println("======================================");
-        System.out.println("======================================");
         for(RouteContainer routeContainer : routeContainers) {
             routeContainer.finish(relationContainers);
         }
@@ -244,8 +244,6 @@ public class GoogleAPI {
         ArrayList<RouteContainer> cheapestRoutes = MethodProvider.getCheapestRoutes(routeContainers);
         for(RouteContainer routeContainer : cheapestRoutes) {
             routeContainer.setMap();
-            System.out.println(Arrays.asList(routeContainer.getRelations().get(routeContainer.getRelations().size() - 1).getElevationResults()));
-            System.out.println(routeContainer.getRelations().get(routeContainer.getRelations().size() - 1).getElevationResults()[routeContainer.getRelations().get(routeContainer.getRelations().size() - 1).getElevationResults().length - 1].location);
         }
 
         return cheapestRoutes;

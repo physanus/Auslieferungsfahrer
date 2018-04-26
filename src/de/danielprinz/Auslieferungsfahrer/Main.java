@@ -94,10 +94,9 @@ public class Main extends Application {
             if(DEBUG) {
                 // Set predefined values
                 textFields.get(0).setText("Aspersdorfer Str. 11b, 2020 Gemeinde Hollabrunn");
-                textFields.get(1).setText("Brunnthalgasse 10, 2020 Hollabrunn");
-                textFields.get(2).setText("Aspersdorfer Str. 34, 2020 Gemeinde Hollabrunn");
-                textFields.get(3).setText("Im Dorf 63, 2020 Gemeinde Hollabrunn");
-                //textFields.get(4).setText("Sonnberger Str. 61, 2020 Gemeinde Hollabrunn");
+                textFields.get(1).setText("Aspersdorfer Str. 34, 2020 Gemeinde Hollabrunn");
+                textFields.get(2).setText("Im Dorf 63, 2020 Gemeinde Hollabrunn");
+                textFields.get(3).setText("Sonnberger Str. 61, 2020 Gemeinde Hollabrunn");
 
                 /*textFields.get(0).setText("Gerichtsberg Kellerpl. 1918/4, 2020 Gemeinde Hollabrunn");
                 textFields.get(1).setText("Ernstbrunner Str. 40, 2032 Enzersdorf im Thale");
@@ -111,9 +110,6 @@ public class Main extends Application {
                 textFields.get(8).setText("Hauptpl. 20, 3714 Sitzendorf an der Schmida");
                 textFields.get(9).setText("Mittergrabern 39, 2020 Grabern");
                 textFields.get(10).setText("Hauptpl. 19-25, 2013 Göllersdorf");*/
-                /*textFields.get(0).setText("Brunnthalgasse 10, 2020 Hollabrunn");
-                textFields.get(1).setText("Großharras 268, 2034 Großharras");
-                textFields.get(2).setText("Brunnthalgasse 10, 2020 Hollabrunn");*/
             }
 
             if(textFields.get(0).getText().equals("")) {
