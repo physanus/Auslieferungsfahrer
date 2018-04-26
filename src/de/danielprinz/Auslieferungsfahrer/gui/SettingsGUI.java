@@ -1,7 +1,8 @@
-package de.danielprinz.Auslieferungsfahrer;
+package de.danielprinz.Auslieferungsfahrer.gui;
 
 import com.sun.javafx.tk.FontLoader;
 import com.sun.javafx.tk.Toolkit;
+import de.danielprinz.Auslieferungsfahrer.Main;
 import de.danielprinz.Auslieferungsfahrer.enums.Direction;
 import javafx.geometry.Insets;
 import javafx.scene.Scene;
@@ -87,45 +88,23 @@ public class SettingsGUI {
         GridPane.setConstraints(incrementTextField, 1, 2);
 
 
-        Label samplesLabel = new Label("Samples [n]:");
-        samplesLabel.setMinWidth(fontLoader.computeStringWidth(samplesLabel.getText(), samplesLabel.getFont()));
-        GridPane.setConstraints(samplesLabel, 0, 3);
-
-        TextField samplesTextField = new TextField();
-        samplesTextField.setPrefColumnCount(6);
-        samplesTextField.setText(String.valueOf(Main.SETTINGS_HANDLER.getSamples()));
-        // force the field to be numeric only
-        samplesTextField.textProperty().addListener((observable, oldValue, newValue) -> {
-            if(newValue.equals("")) return;
-            try {
-                if(Integer.parseInt(newValue) < 0)
-                    samplesTextField.setText(oldValue);
-            } catch (NumberFormatException e) {
-                samplesTextField.setText(oldValue);
-            }
-        });
-        GridPane.setConstraints(samplesTextField, 1, 3);
-
-
         Button save = new Button("Speichern und schließen");
         GridPane.setConstraints(save, 1, 4);
         save.setOnAction(event -> {
             double consumption = Double.parseDouble(consumptionTextField.getText());
             double decrementValue = Double.parseDouble(decrementTextField.getText());
             double incrementValue = Double.parseDouble(incrementTextField.getText());
-            int samples = Integer.parseInt(samplesTextField.getText());
 
             Main.SETTINGS_HANDLER.setConsumption(consumption);
             Main.SETTINGS_HANDLER.setDecrementValue(1 - decrementValue/100.0); // 10
             Main.SETTINGS_HANDLER.setIncrementValue(1 + incrementValue/100.0); // 20
-            Main.SETTINGS_HANDLER.setSamples(samples);
 
             window.close();
         });
 
 
         // Add everything to grid
-        grid.getChildren().addAll(consumptionLabel, consumptionTextField, decrementLabel, decrementTextField, incrementLabel, incrementTextField, samplesLabel, samplesTextField, save);
+        grid.getChildren().addAll(consumptionLabel, consumptionTextField, decrementLabel, decrementTextField, incrementLabel, incrementTextField, save);
 
         Scene scene = new Scene(grid, 360, 200);
         window.setScene(scene);

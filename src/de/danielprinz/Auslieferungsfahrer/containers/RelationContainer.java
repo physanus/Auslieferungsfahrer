@@ -3,11 +3,9 @@ package de.danielprinz.Auslieferungsfahrer.containers;
 import com.google.maps.model.Distance;
 import com.google.maps.model.Duration;
 import com.google.maps.model.ElevationResult;
-import de.danielprinz.Auslieferungsfahrer.GoogleAPI;
+import com.google.maps.model.EncodedPolyline;
 import de.danielprinz.Auslieferungsfahrer.Main;
 import de.danielprinz.Auslieferungsfahrer.enums.Direction;
-
-import java.io.IOException;
 
 public class RelationContainer {
 
@@ -16,7 +14,8 @@ public class RelationContainer {
     private Duration duration;
     private Distance distance;
     private double cost = -1;
-    private ElevationResult[] elevationResults = null;
+    private ElevationResult[] elevationResults; // elevation
+    private EncodedPolyline encodedPolyline;
 
     /**
      * Saves the relation data
@@ -33,7 +32,7 @@ public class RelationContainer {
     }
 
     public AddressContainer getAddressContainer1() {
-        return null;
+        return addressContainer1;
     }
 
     public AddressContainer getAddressContainer2() {
@@ -52,12 +51,26 @@ public class RelationContainer {
         return elevationResults;
     }
 
+    public void setElevationResults(ElevationResult[] elevationResults) {
+        this.elevationResults = elevationResults;
+    }
+
+    public EncodedPolyline getEncodedPolyline() {
+        return encodedPolyline;
+    }
+
+    public void setEncodedPolyline(EncodedPolyline encodedPolyline) {
+        this.encodedPolyline = encodedPolyline;
+    }
+
     /**
      * Calculates the energy consumption for this relation
      * @param start The startpoint. null if you only need the magnitude
      * @return The energy consumption in kW/h
      */
     public double getCost(AddressContainer start) {
+
+        if(elevationResults == null) return -1;
 
         // allow caching of the costs
         if(start == null) {
@@ -72,13 +85,6 @@ public class RelationContainer {
         AddressContainer end = getOtherAddressContainer(start);
 
         ///////////////////////////////////////////////////
-
-        try {
-            elevationResults = GoogleAPI.getExactElevation(start, end);
-        } catch (IOException e) {
-            e.printStackTrace();
-            return 0.0;
-        }
 
         double elevation = 0.0;
         for(ElevationResult elevationResult : elevationResults) {

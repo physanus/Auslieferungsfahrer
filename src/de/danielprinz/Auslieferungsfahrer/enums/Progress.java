@@ -4,8 +4,9 @@ public enum Progress {
 
     LAT_LAN(1),
     RELATIONS(2),
-    CHEAPEST_ROUTES(3),
-    FINISHED(4);
+    ELEVATION(3),
+    CHEAPEST_ROUTES(4),
+    FINISHED(5);
 
 
     int i;

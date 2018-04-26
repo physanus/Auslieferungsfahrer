@@ -15,7 +15,7 @@ public class EnergyHandler {
 
     @Override
     public String toString() {
-        String energyString = new DecimalFormat("#.0##", DecimalFormatSymbols.getInstance(Locale.ENGLISH)).format(energy);
+        String energyString = new DecimalFormat("#.###", DecimalFormatSymbols.getInstance(Locale.ENGLISH)).format(energy);
         return energyString + " kW/h";
     }
 

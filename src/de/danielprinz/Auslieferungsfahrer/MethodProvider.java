@@ -16,8 +16,11 @@ public class MethodProvider {
      * @return The RelationContainer containing both AddressContainers
      */
     public static RelationContainer getRelationByAddresses(List<RelationContainer> relationContainers, AddressContainer addressContainer1, AddressContainer addressContainer2) {
+        //System.out.println("looking for route from " + addressContainer1.getAddress() + " to " + addressContainer2.getAddress());
         for(RelationContainer relationContainer : relationContainers) {
             if(relationContainer.containsAddressContainer(addressContainer1) && relationContainer.containsAddressContainer(addressContainer2)) {
+                //System.out.println("found route from       " + relationContainer.getAddressContainer1().getAddress() + " to " + relationContainer.getAddressContainer2().getAddress());
+                //System.out.println("");
                 return relationContainer;
             }
         }
