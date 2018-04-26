@@ -1,9 +1,6 @@
 package de.danielprinz.Auslieferungsfahrer.containers;
 
-import com.google.maps.model.Distance;
-import com.google.maps.model.Duration;
-import com.google.maps.model.ElevationResult;
-import com.google.maps.model.EncodedPolyline;
+import com.google.maps.model.*;
 import de.danielprinz.Auslieferungsfahrer.Main;
 import de.danielprinz.Auslieferungsfahrer.enums.Direction;
 
@@ -16,6 +13,7 @@ public class RelationContainer {
     private double cost = -1;
     private ElevationResult[] elevationResults; // elevation
     private EncodedPolyline encodedPolyline;
+    private DirectionsStep[] directionsSteps;
 
     /**
      * Saves the relation data
@@ -61,6 +59,14 @@ public class RelationContainer {
 
     public void setEncodedPolyline(EncodedPolyline encodedPolyline) {
         this.encodedPolyline = encodedPolyline;
+    }
+
+    public DirectionsStep[] getDirectionsSteps() {
+        return directionsSteps;
+    }
+
+    public void setDirectionsSteps(DirectionsStep[] directionsSteps) {
+        this.directionsSteps = directionsSteps;
     }
 
     /**

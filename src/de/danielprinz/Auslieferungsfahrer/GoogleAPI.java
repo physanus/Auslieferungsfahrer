@@ -260,12 +260,16 @@ public class GoogleAPI {
 
             DirectionsResult result = DirectionsApi.getDirections(CONTEXT_DISTANCE_DIRECTIONS, relationContainer.getAddressContainer1().getAddress(), relationContainer.getAddressContainer2().getAddress())
                     .alternatives(false)
-                    .departureTime(new DateTime().plus(Duration.standardMinutes(2))) // TODO delay anpassen
+                    .departureTime(new DateTime().plus(Duration.standardMinutes(2))) // TODO in die Einstellungen übernehmen
                     .mode(TravelMode.DRIVING)
+                    .language("de")
                     .trafficModel(TrafficModel.BEST_GUESS)
                     .await();
             EncodedPolyline encodedPolyline = result.routes[0].overviewPolyline;
             List<LatLng> latLngs = encodedPolyline.decodePath();
+
+            DirectionsStep[] directionsSteps = result.routes[0].legs[0].steps;
+            relationContainer.setDirectionsSteps(directionsSteps);
 
             ElevationResult[] elevationResults = ElevationApi.getByPoints(CONTEXT_ELEVATION, (LatLng[]) (latLngs.toArray(new LatLng[0]))).await();
             relationContainer.setElevationResults(elevationResults);
